@@ -1,0 +1,14 @@
+{
+	"required": true,
+	"package": "net.lopymine.ipi.mixin",
+	"refmap": "${mod_id}.refmap.json",
+	"compatibilityLevel": "JAVA_${java}",
+	"mixins": [
+	],
+	"client": [
+		"HandledScreenMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}

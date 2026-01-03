@@ -16,16 +16,17 @@
     "environment": "*",
     "entrypoints": {
         "main": [
-            "net.lopymine.mossy.Mossy"
+	        "net.lopymine.ipi.InventoryInteractions"
         ],
         "client": [
-            "net.lopymine.mossy.client.MossyClient"
+	        "net.lopymine.ipi.client.InventoryInteractionsClient"
         ],
         "modmenu": [
-            "net.lopymine.mossy.modmenu.ModMenuIntegration"
+	        "net.lopymine.ipi.modmenu.ModMenuIntegration"
         ]
     },
     "depends": {
+        "inventory_particles": ">=${inventory_particles}",
         "fabricloader": ">=${fabric_loader}",
         "minecraft": ">=${minecraft}",
         "java": ">=${java}",
