@@ -6,7 +6,9 @@
 	"mixins": [
 	],
 	"client": [
-		"HandledScreenMixin"
+		"HandledScreenMixin",
+		"InventoryParticleMixin",
+		"InventoryCursorMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

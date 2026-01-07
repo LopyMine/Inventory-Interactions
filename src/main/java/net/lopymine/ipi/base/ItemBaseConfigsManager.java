@@ -6,22 +6,28 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import net.lopymine.ip.t2o.*;
 import net.lopymine.ipi.InventoryInteractions;
 import net.lopymine.ipi.config.base.*;
+import net.lopymine.ipi.config.physics.ItemPhysicsConfig;
 import net.lopymine.ipi.config.vec.Vec2i;
-import net.lopymine.ipi.t2o.Texture2ObjectsManager;
-import net.lopymine.ipi.utils.ArgbUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.*;
 import net.minecraft.resource.ResourceManager;
+import org.jetbrains.annotations.NotNull;
 
 public class ItemBaseConfigsManager {
 
-	public static final Vec2i NO_OFFSET = new Vec2i(0, 0);
+	public static final Vec2i VANILLA_GRAB = new Vec2i(0, 0);
 	public static final Vec2i MIDDLE_CENTER = new Vec2i(8, 8);
-	public static final ItemBaseConfig STANDARD_CONFIG = new ItemBaseConfig(NO_OFFSET, MIDDLE_CENTER);
+	public static final ItemBaseConfig STANDARD_CONFIG = new ItemBaseConfig(VANILLA_GRAB, MIDDLE_CENTER, ItemPhysicsConfig.getNewInstance().get());
 
-	public static final String FOLDER_NAME = "base";
+	private static final Texture2ObjectPixelFilter GRAB_TEXTURE_FILTER = getColorFilter(RawItemBaseConfig.GRAB_COLOR);
+	private static final Texture2ObjectPixelFilter SHAPE_TEXTURE_FILTER = getColorFilter(RawItemBaseConfig.SHAPE_COLOR);
+
+	private static final Texture2Object<Vec2i> PIXEL_POSITION = (x, y, imageWidth, imageHeight, color) -> new Vec2i(x, y);
+
+	public static final String FOLDER_NAME = "i-interactions/base";
 	public static Map<Item, ItemBaseConfig> ITEM_CONFIGS = new HashMap<>();
 
 	public static void reload() {
@@ -54,35 +60,36 @@ public class ItemBaseConfigsManager {
 		if (item == Items.AIR) {
 			return;
 		}
-		Vec2i offset = Optional.of(Texture2ObjectsManager.readFromTexture(rawConfig.getOffsetTexture(), (x, y, color) -> {
-			if (ArgbUtils.getAlpha(color) == 0) {
-				return null;
-			}
-			return new Vec2i(x, y);
-		})).filter((list) -> !list.isEmpty()).map((list) -> list.get(0)).orElse(NO_OFFSET);
 
-		Vec2i center = Optional.of(Texture2ObjectsManager.readFromTexture(rawConfig.getShapeTexture(), (x, y, color) -> {
-			if (ArgbUtils.getAlpha(color) == 0) {
-				return null;
-			}
-			return new Vec2i(x, y);
-		})).filter((list) -> !list.isEmpty()).map((list) -> {
-			int x = 0;
-			int y = 0;
-			int c = 0;
-			for (Vec2i itemOffset : list) {
-				x += itemOffset.offsetX();
-				y += itemOffset.offsetY();
-				c++;
-			}
-			if (c == 0) {
-				return MIDDLE_CENTER;
-			}
-			return new Vec2i(x / c, y / c);
-		}).orElse(MIDDLE_CENTER);
+		Vec2i grabCenter = Optional.of(Texture2ObjectsManager.readFromTexture(rawConfig.getBaseTextureInFolder(),
+				"grab center position",
+				GRAB_TEXTURE_FILTER,
+				PIXEL_POSITION
+		)).filter((list) -> !list.isEmpty()).map((list) -> findCenter(list, VANILLA_GRAB)).orElse(VANILLA_GRAB);
 
-		ItemBaseConfig config = new ItemBaseConfig(offset, center);
+		Vec2i massCenter = Optional.of(Texture2ObjectsManager.readFromTexture(rawConfig.getBaseTextureInFolder(),
+				"mass center position",
+				SHAPE_TEXTURE_FILTER,
+				PIXEL_POSITION
+		)).filter((list) -> !list.isEmpty()).map((list) -> findCenter(list, MIDDLE_CENTER)).orElse(MIDDLE_CENTER);
+
+		ItemBaseConfig config = new ItemBaseConfig(grabCenter, massCenter, rawConfig.getPhysicsConfig());
 		ITEM_CONFIGS.put(item, config);
+	}
+
+	private static @NotNull Vec2i findCenter(List<Vec2i> list, Vec2i standardValue) {
+		int x = 0;
+		int y = 0;
+		int c = 0;
+		for (Vec2i itemOffset : list) {
+			x += itemOffset.offsetX();
+			y += itemOffset.offsetY();
+			c++;
+		}
+		if (c == 0) {
+			return standardValue;
+		}
+		return new Vec2i(x / c, y / c);
 	}
 
 	public static ItemBaseConfig get(Item item) {
@@ -91,5 +98,9 @@ public class ItemBaseConfigsManager {
 			return STANDARD_CONFIG;
 		}
 		return config;
+	}
+
+	private static @NotNull Texture2ObjectPixelFilter getColorFilter(int color) {
+		return () -> (x, y, imageWidth, imageHeight, c) -> c == color;
 	}
 }

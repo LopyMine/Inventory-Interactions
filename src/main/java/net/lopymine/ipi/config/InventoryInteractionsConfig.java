@@ -1,7 +1,7 @@
 package net.lopymine.ipi.config;
 
 import lombok.*;
-import net.lopymine.ipi.utils.*;
+import net.lopymine.mossylib.utils.*;
 import org.slf4j.*;
 
 import com.mojang.serialization.*;
@@ -13,42 +13,40 @@ import net.lopymine.ipi.InventoryInteractions;
 import java.io.*;
 import java.util.concurrent.CompletableFuture;
 
-import static net.lopymine.ipi.utils.CodecUtils.option;
+import static net.lopymine.mossylib.utils.CodecUtils.option;
 
 @Getter
 @Setter
 @AllArgsConstructor
-public class MossyConfig {
+public class InventoryInteractionsConfig {
 
-	public static final Codec<MossyConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-			option("mossy", false, Codec.BOOL, MossyConfig::isMossy),
-			option("secret", 0.0F, Codec.FLOAT, MossyConfig::getSecret)
-	).apply(instance, MossyConfig::new));
+	public static final Codec<InventoryInteractionsConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+			option("mod_enabled", false, Codec.BOOL, InventoryInteractionsConfig::isModEnabled)
+	).apply(instance, InventoryInteractionsConfig::new));
 
 	private static final File CONFIG_FILE = FabricLoader.getInstance().getConfigDir().resolve(InventoryInteractions.MOD_ID + ".json5").toFile();
 	private static final Logger LOGGER = LoggerFactory.getLogger(InventoryInteractions.MOD_NAME + "/Config");
-	private static MossyConfig INSTANCE;
+	private static InventoryInteractionsConfig INSTANCE;
 	
-	private boolean mossy;
-	private float secret;
+	private boolean modEnabled;
 
-	private MossyConfig() {
+	private InventoryInteractionsConfig() {
 		throw new IllegalArgumentException();
 	}
 
-	public static MossyConfig getInstance() {
+	public static InventoryInteractionsConfig getInstance() {
 		return INSTANCE == null ? reload() : INSTANCE;
 	}
 
-	public static MossyConfig reload() {
-		return INSTANCE = MossyConfig.read();
+	public static InventoryInteractionsConfig reload() {
+		return INSTANCE = InventoryInteractionsConfig.read();
 	}
 
-	public static MossyConfig getNewInstance() {
+	public static InventoryInteractionsConfig getNewInstance() {
 		return CodecUtils.parseNewInstanceHacky(CODEC);
 	}
 
-	private static MossyConfig read() {
+	private static InventoryInteractionsConfig read() {
 		return ConfigUtils.readConfig(CODEC, CONFIG_FILE, LOGGER);
 	}
 

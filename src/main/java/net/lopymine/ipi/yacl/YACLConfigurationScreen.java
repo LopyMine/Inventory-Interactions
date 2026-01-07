@@ -1,68 +1,40 @@
 package net.lopymine.ipi.yacl;
 
-import dev.isxander.yacl3.api.*;
 import lombok.experimental.ExtensionMethod;
-import net.lopymine.ipi.yacl.base.*;
-import net.lopymine.ipi.yacl.utils.*;
+import net.lopymine.ipi.InventoryInteractions;
+import net.lopymine.mossylib.yacl.api.*;
+import net.lopymine.mossylib.yacl.extension.SimpleOptionExtension;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.text.Text;
 
-import net.lopymine.ipi.config.MossyConfig;
-import net.lopymine.ipi.utils.ModMenuUtils;
-import net.lopymine.ipi.yacl.extension.SimpleOptionExtension;
-import net.lopymine.ipi.yacl.screen.SimpleYACLScreen;
-
-import java.util.function.Function;
+import net.lopymine.ipi.config.InventoryInteractionsConfig;
 
 @ExtensionMethod(SimpleOptionExtension.class)
 public class YACLConfigurationScreen {
-
-	private static final Function<Boolean, Text> ENABLED_OR_DISABLE_FORMATTER = ModMenuUtils.getEnabledOrDisabledFormatter();
 
 	private YACLConfigurationScreen() {
 		throw new IllegalStateException("Screen class");
 	}
 
 	public static Screen createScreen(Screen parent) {
-		MossyConfig defConfig = MossyConfig.getNewInstance();
-		MossyConfig config = MossyConfig.getInstance();
+		InventoryInteractionsConfig defConfig = InventoryInteractionsConfig.getNewInstance();
+		InventoryInteractionsConfig config = InventoryInteractionsConfig.getInstance();
 
-		return SimpleYACLScreen.startBuilder(parent, config::saveAsync)
+		return SimpleYACLScreen.startBuilder(InventoryInteractions.MOD_ID, parent, config::saveAsync)
 				.categories(getGeneralCategory(defConfig, config))
-				.categories(SimpleCollector.getIf(getSecretCategory(defConfig, config), config::isMossy))
 				.build();
 	}
 
-	private static ConfigCategory getSecretCategory(MossyConfig defConfig, MossyConfig config) {
-		return SimpleCategory.startBuilder("secret_category")
-				.groups(getSecretGroup(defConfig, config))
-				.build();
-	}
-
-	private static ConfigCategory getGeneralCategory(MossyConfig defConfig, MossyConfig config) {
+	private static SimpleCategory getGeneralCategory(InventoryInteractionsConfig defConfig, InventoryInteractionsConfig config) {
 		return SimpleCategory.startBuilder("general")
-				.groups(getMossyGroup(defConfig, config))
-				.build();
+				.groups(getMain(defConfig, config));
 	}
 
-	private static OptionGroup getSecretGroup(MossyConfig defConfig, MossyConfig config) {
-		return SimpleGroup.startBuilder("secret_group").options(
-				SimpleOption.<Float>startBuilder("secret_option")
-						.withBinding(defConfig.getSecret(), config::getSecret, config::setSecret, false)
-						.withController(-180F, 180F, 1.0F)
+	private static SimpleGroup getMain(InventoryInteractionsConfig defConfig, InventoryInteractionsConfig config) {
+		return SimpleGroup.startBuilder("main_group").options(
+				SimpleOption.<Boolean>startBuilder("mod_enabled")
+						.withBinding(defConfig.isModEnabled(), config::isModEnabled, config::setModEnabled, false)
 						.withDescription(SimpleContent.NONE)
-						.build()
-		).build();
-	}
-
-	private static OptionGroup getMossyGroup(MossyConfig defConfig, MossyConfig config) {
-		return SimpleGroup.startBuilder("mossy_group").options(
-				SimpleOption.<Boolean>startBuilder("mossy_option")
-						.withBinding(defConfig.isMossy(), config::isMossy, config::setMossy, false)
-						.withController(ENABLED_OR_DISABLE_FORMATTER)
-						.withDescription(SimpleContent.IMAGE)
-						.build()
-		).build();
+		);
 	}
 
 }

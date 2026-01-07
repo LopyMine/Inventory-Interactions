@@ -1,6 +1,7 @@
 package net.lopymine.ipi.config.base;
 
 import lombok.*;
+import net.lopymine.ipi.config.physics.ItemPhysicsConfig;
 import net.lopymine.ipi.config.vec.Vec2i;
 import net.minecraft.util.math.MathHelper;
 
@@ -9,16 +10,18 @@ import net.minecraft.util.math.MathHelper;
 @AllArgsConstructor
 public class ItemBaseConfig {
 
-	private Vec2i offset;
-	private Vec2i center;
-	private float radius;
+	private Vec2i grabCenter;
+	private Vec2i massCenter;
+	private ItemPhysicsConfig physicsConfig;
+	private double radius;
 
-	public ItemBaseConfig(Vec2i offset, Vec2i center) {
-		this.offset = offset;
-		this.center = center;
-		int x = MathHelper.abs(center.offsetX() - offset.offsetX());
-		int y = MathHelper.abs(center.offsetY() - offset.offsetY());
-		float h = MathHelper.hypot(x, y);
+	public ItemBaseConfig(Vec2i grabCenter, Vec2i massCenter, ItemPhysicsConfig physicsConfig) {
+		this.grabCenter = grabCenter;
+		this.massCenter = massCenter;
+		this.physicsConfig = physicsConfig;
+		int x = MathHelper.abs(massCenter.offsetX() - grabCenter.offsetX());
+		int y = MathHelper.abs(massCenter.offsetY() - grabCenter.offsetY());
+		double h = MathHelper.hypot(x, y);
 		if (h == 0) {
 			h = 16.0F;
 		}

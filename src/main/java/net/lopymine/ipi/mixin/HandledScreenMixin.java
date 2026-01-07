@@ -2,18 +2,18 @@ package net.lopymine.ipi.mixin;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.*;
 import com.llamalad7.mixinextras.sugar.Local;
-import net.lopymine.ip.config.InventoryParticlesConfig;
-import net.lopymine.ip.config.sub.InventoryParticlesMainConfig;
 import net.lopymine.ip.element.InventoryCursor;
 import net.lopymine.ip.renderer.InventoryParticlesRenderer;
 import net.lopymine.ipi.renderer.CursorItemRenderer;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.item.ItemStack;
-import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+@Debug(export = true)
 @Mixin(value = HandledScreen.class, priority = 950)
 public class HandledScreenMixin {
 
@@ -23,8 +23,9 @@ public class HandledScreenMixin {
 	}
 
 	@Inject(at = @At("HEAD"), method = "tick")
-	private void tickInventoryParticles(CallbackInfo ci) {
-		CursorItemRenderer.getInstance().tick(InventoryParticlesRenderer.getInstance().getCursor());
+	private void tickCursorItem(CallbackInfo ci) {
+		InventoryCursor cursor = InventoryParticlesRenderer.getInstance().getCursor();
+		CursorItemRenderer.getInstance().tick(cursor.getCurrentStack(), cursor.getMouseX(), cursor.getMouseY());
 	}
 
 }

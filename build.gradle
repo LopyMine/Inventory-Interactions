@@ -21,12 +21,16 @@ mossyDependencies {
 
 		// - Or if you want to disable it and handle by yourself, just disable it auto handling:
 
-		//disable("just_mod_id")
+		disable("inventory-particles")
 	}
 }
 
-mossyResources {
-	//expandFiles = ["custom", "file", "patterns", "here"]
+repositories {
+	mavenLocal()
+}
+
+dependencies {
+	include(modImplementation("net.lopymine:inventory_particles:1.2.2-beta.1-fabric-1.21.8"))
 }
 
 String prop(String key) {
