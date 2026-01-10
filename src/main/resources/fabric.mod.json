@@ -26,14 +26,15 @@
         ]
     },
     "depends": {
+	    "mossylib": ">=${mossylib}",
         "inventory_particles": ">=${inventory_particles}",
         "fabricloader": ">=${fabric_loader}",
         "minecraft": ">=${minecraft}",
         "java": ">=${java}",
         "${fabric_api_id}": "*"
     },
-    "accessWidener": "aws/${minecraft}.accesswidener",
-    "mixins": [
-        "${mod_id}.mixins.json"
-    ]
+	"accessWidener": "aws/fabric-${minecraft}.accesswidener",
+	"mixins": [
+		"${fabric_trick_mixin_configs}"
+	]
 }

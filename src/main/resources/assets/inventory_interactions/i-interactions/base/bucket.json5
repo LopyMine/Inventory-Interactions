@@ -1,0 +1,21 @@
+{
+	"base_texture": "bucket.png",
+	"items": [
+		"minecraft:bucket",
+		"minecraft:water_bucket",
+		"minecraft:cod_bucket",
+		"minecraft:salmon_bucket",
+		"minecraft:tropical_fish_bucket",
+		"minecraft:pufferfish_bucket",
+		"minecraft:axolotl_bucket",
+		"minecraft:tadpole_bucket",
+		"minecraft:lava_bucket",
+		"minecraft:powder_snow_bucket",
+		"minecraft:milk_bucket"
+	],
+	"physics": {
+		"gravity": 1.0,
+		"braking": 0.990,
+		"cursor_impulse_inherit_coefficient": 1.0
+	}
+}

@@ -1,0 +1,11 @@
+{
+	"base_texture": "squid_spawn_egg.png",
+	"items": [
+		"minecraft:squid_spawn_egg"
+	],
+	"physics": {
+		"gravity": 1.0,
+		"braking": 0.990,
+		"cursor_impulse_inherit_coefficient": 1.0
+	}
+}

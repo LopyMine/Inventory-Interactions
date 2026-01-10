@@ -1,0 +1,17 @@
+{
+	"base_texture": "chestplate.png",
+	"items": [
+		"minecraft:leather_chestplate",
+		"minecraft:copper_chestplate",
+		"minecraft:chainmail_chestplate",
+		"minecraft:iron_chestplate",
+		"minecraft:golden_chestplate",
+		"minecraft:diamond_chestplate",
+		"minecraft:netherite_chestplate"
+	],
+	"physics": {
+		"gravity": 1.0,
+		"braking": 0.990,
+		"cursor_impulse_inherit_coefficient": 1.0
+	}
+}

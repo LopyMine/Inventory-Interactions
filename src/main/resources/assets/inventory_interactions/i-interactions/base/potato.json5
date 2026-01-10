@@ -1,0 +1,13 @@
+{
+	"base_texture": "potato.png",
+	"items": [
+		"minecraft:potato",
+		"minecraft:poisonous_potato",
+		"minecraft:baked_potato"
+	],
+	"physics": {
+		"gravity": 1.0,
+		"braking": 0.990,
+		"cursor_impulse_inherit_coefficient": 1.0
+	}
+}

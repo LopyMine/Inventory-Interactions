@@ -1,0 +1,17 @@
+{
+	"base_texture": "pickaxe.png",
+	"items": [
+		"minecraft:wooden_pickaxe",
+		"minecraft:stone_pickaxe",
+		"minecraft:copper_pickaxe",
+		"minecraft:iron_pickaxe",
+		"minecraft:golden_pickaxe",
+		"minecraft:diamond_pickaxe",
+		"minecraft:netherite_pickaxe"
+	],
+	"physics": {
+		"gravity": 1.0,
+		"braking": 0.990,
+		"cursor_impulse_inherit_coefficient": 1.0
+	}
+}

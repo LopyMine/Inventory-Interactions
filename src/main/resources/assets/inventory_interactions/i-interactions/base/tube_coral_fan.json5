@@ -1,0 +1,12 @@
+{
+	"base_texture": "tube_coral_fan.png",
+	"items": [
+		"minecraft:tube_coral_fan",
+		"minecraft:dead_tube_coral_fan"
+	],
+	"physics": {
+		"gravity": 1.0,
+		"braking": 0.990,
+		"cursor_impulse_inherit_coefficient": 1.0
+	}
+}

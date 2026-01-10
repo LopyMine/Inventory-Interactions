@@ -1,0 +1,11 @@
+{
+	"base_texture": "popped_chorus_fruit.png",
+	"items": [
+		"minecraft:popped_chorus_fruit"
+	],
+	"physics": {
+		"gravity": 1.0,
+		"braking": 0.990,
+		"cursor_impulse_inherit_coefficient": 1.0
+	}
+}

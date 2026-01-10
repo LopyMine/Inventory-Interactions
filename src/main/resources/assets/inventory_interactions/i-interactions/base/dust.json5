@@ -1,0 +1,14 @@
+{
+	"base_texture": "dust.png",
+	"items": [
+		"minecraft:glowstone_dust",
+		"minecraft:gunpowder",
+		"minecraft:redstone",
+		"minecraft:sugar"
+	],
+	"physics": {
+		"gravity": 0.75,
+		"braking": 0.990,
+		"cursor_impulse_inherit_coefficient": 1.0
+	}
+}

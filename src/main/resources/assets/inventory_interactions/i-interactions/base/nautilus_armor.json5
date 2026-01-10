@@ -1,0 +1,15 @@
+{
+	"base_texture": "nautilus_armor.png",
+	"items": [
+		"minecraft:copper_nautilus_armor",
+		"minecraft:iron_nautilus_armor",
+		"minecraft:golden_nautilus_armor",
+		"minecraft:diamond_nautilus_armor",
+		"minecraft:netherite_nautilus_armor"
+	],
+	"physics": {
+		"gravity": 1.0,
+		"braking": 0.990,
+		"cursor_impulse_inherit_coefficient": 1.0
+	}
+}

@@ -8,29 +8,14 @@ mossyDependencies {
 	lombok = prop("base.lombok_version")
 	fabricApi = prop("build.fabric_api")
 	fabricLoader = prop("build.fabric_loader")
+}
 
-	additional {
-		// - By default, every additional project dependency ("dep.modId" from gradle.properties) will use
-		// - Modrinth Maven and "modImplementation" configuration name
-		// - If you want to override mod configuration name, you can do this:
-
-		//override("modCompileOnly", "just_mod_id")
-
-		// - It will do this:
-		// - modImplementation("maven.modrinth:modId:version") -> modCompileOnly("maven.modrinth:modId:version")
-
-		// - Or if you want to disable it and handle by yourself, just disable it auto handling:
-
-		disable("inventory-particles")
-	}
+mossyResources {
+	customProperty("inventory_particles", prop("dep.inventory-particles"))
 }
 
 repositories {
 	mavenLocal()
-}
-
-dependencies {
-	include(modImplementation("net.lopymine:inventory_particles:1.2.2-beta.1-fabric-1.21.8"))
 }
 
 String prop(String key) {

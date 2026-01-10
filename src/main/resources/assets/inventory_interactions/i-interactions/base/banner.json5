@@ -1,0 +1,26 @@
+{
+	"base_texture": "banner.png",
+	"items": [
+		"minecraft:red_banner",
+		"minecraft:orange_banner",
+		"minecraft:yellow_banner",
+		"minecraft:lime_banner",
+		"minecraft:green_banner",
+		"minecraft:cyan_banner",
+		"minecraft:light_blue_banner",
+		"minecraft:blue_banner",
+		"minecraft:purple_banner",
+		"minecraft:magenta_banner",
+		"minecraft:pink_banner",
+		"minecraft:white_banner",
+		"minecraft:light_gray_banner",
+		"minecraft:gray_banner",
+		"minecraft:black_banner",
+		"minecraft:brown_banner"
+	],
+	"physics": {
+		"gravity": 1.0,
+		"braking": 0.990,
+		"cursor_impulse_inherit_coefficient": 1.0
+	}
+}

@@ -1,0 +1,11 @@
+{
+	"base_texture": "mace.png",
+	"items": [
+		"minecraft:mace"
+	],
+	"physics": {
+		"gravity": 2.0,
+		"braking": 1.000,
+		"cursor_impulse_inherit_coefficient": 0.8
+	}
+}

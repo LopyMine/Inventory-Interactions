@@ -1,0 +1,11 @@
+{
+	"base_texture": "medium_amethyst_bud.png",
+	"items": [
+		"minecraft:medium_amethyst_bud"
+	],
+	"physics": {
+		"gravity": 1.0,
+		"braking": 0.990,
+		"cursor_impulse_inherit_coefficient": 1.0
+	}
+}

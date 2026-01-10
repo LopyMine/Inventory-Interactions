@@ -1,0 +1,16 @@
+{
+	"base_texture": "minecart.png",
+	"items": [
+		"minecraft:minecart",
+		"minecraft:hopper_minecart",
+		"minecraft:chest_minecart",
+		"minecraft:furnace_minecart",
+		"minecraft:tnt_minecart",
+		"minecraft:command_block_minecart"
+	],
+	"physics": {
+		"gravity": 1.0,
+		"braking": 0.990,
+		"cursor_impulse_inherit_coefficient": 1.0
+	}
+}

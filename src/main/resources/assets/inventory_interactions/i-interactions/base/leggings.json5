@@ -1,0 +1,17 @@
+{
+	"base_texture": "leggings.png",
+	"items": [
+		"minecraft:leather_leggings",
+		"minecraft:copper_leggings",
+		"minecraft:chainmail_leggings",
+		"minecraft:iron_leggings",
+		"minecraft:golden_leggings",
+		"minecraft:diamond_leggings",
+		"minecraft:netherite_leggings"
+	],
+	"physics": {
+		"gravity": 1.0,
+		"braking": 0.990,
+		"cursor_impulse_inherit_coefficient": 1.0
+	}
+}

@@ -1,0 +1,11 @@
+{
+	"base_texture": "string.png",
+	"items": [
+		"minecraft:string"
+	],
+	"physics": {
+		"gravity": 0.25,
+		"braking": 0.950,
+		"cursor_impulse_inherit_coefficient": 1.0
+	}
+}

@@ -1,0 +1,24 @@
+{
+	"base_texture": "chain.png",
+	"items": [
+		//? if <=1.21.8 {
+        /*"minecraft:chain",
+        *///?} else {
+		"minecraft:iron_chain",
+        //?}
+		
+		"minecraft:copper_chain",
+		"minecraft:exposed_copper_chain",
+		"minecraft:weathered_copper_chain",
+		"minecraft:oxidized_copper_chain",
+		"minecraft:waxed_copper_chain",
+		"minecraft:waxed_exposed_copper_chain",
+		"minecraft:waxed_weathered_copper_chain",
+		"minecraft:waxed_oxidized_copper_chain"
+	],
+	"physics": {
+		"gravity": 1.0,
+		"braking": 0.990,
+		"cursor_impulse_inherit_coefficient": 1.0
+	}
+}

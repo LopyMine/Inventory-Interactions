@@ -1,0 +1,11 @@
+{
+	"base_texture": "heart_of_the_sea.png",
+	"items": [
+		"minecraft:heart_of_the_sea"
+	],
+	"physics": {
+		"gravity": 1.0,
+		"braking": 0.990,
+		"cursor_impulse_inherit_coefficient": 1.0
+	}
+}

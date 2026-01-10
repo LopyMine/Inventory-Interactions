@@ -21,7 +21,8 @@ import static net.lopymine.mossylib.utils.CodecUtils.option;
 public class InventoryInteractionsConfig {
 
 	public static final Codec<InventoryInteractionsConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-			option("mod_enabled", false, Codec.BOOL, InventoryInteractionsConfig::isModEnabled)
+			option("mod_enabled", true, Codec.BOOL, InventoryInteractionsConfig::isModEnabled),
+			option("debug_log", false, Codec.BOOL, InventoryInteractionsConfig::isDebugLog)
 	).apply(instance, InventoryInteractionsConfig::new));
 
 	private static final File CONFIG_FILE = FabricLoader.getInstance().getConfigDir().resolve(InventoryInteractions.MOD_ID + ".json5").toFile();
@@ -29,6 +30,7 @@ public class InventoryInteractionsConfig {
 	private static InventoryInteractionsConfig INSTANCE;
 	
 	private boolean modEnabled;
+	private boolean debugLog;
 
 	private InventoryInteractionsConfig() {
 		throw new IllegalArgumentException();

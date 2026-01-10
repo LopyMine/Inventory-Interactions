@@ -1,0 +1,11 @@
+{
+	"base_texture": "allium.png",
+	"items": [
+		"minecraft:allium"
+	],
+	"physics": {
+		"gravity": 0.5,
+		"braking": 0.990,
+		"cursor_impulse_inherit_coefficient": 1.0
+	}
+}

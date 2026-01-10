@@ -1,0 +1,12 @@
+{
+	"base_texture": "horn_coral.png",
+	"items": [
+		"minecraft:horn_coral",
+		"minecraft:dead_horn_coral"
+	],
+	"physics": {
+		"gravity": 1.0,
+		"braking": 0.990,
+		"cursor_impulse_inherit_coefficient": 1.0
+	}
+}

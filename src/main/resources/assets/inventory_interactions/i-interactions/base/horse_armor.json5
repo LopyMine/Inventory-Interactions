@@ -1,0 +1,16 @@
+{
+	"base_texture": "horse_armor.png",
+	"items": [
+		"minecraft:leather_horse_armor",
+		"minecraft:copper_horse_armor",
+		"minecraft:iron_horse_armor",
+		"minecraft:golden_horse_armor",
+		"minecraft:diamond_horse_armor",
+		"minecraft:netherite_horse_armor"
+	],
+	"physics": {
+		"gravity": 1.0,
+		"braking": 0.990,
+		"cursor_impulse_inherit_coefficient": 1.0
+	}
+}

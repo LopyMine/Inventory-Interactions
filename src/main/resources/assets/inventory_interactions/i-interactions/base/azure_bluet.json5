@@ -1,0 +1,11 @@
+{
+	"base_texture": "azure_bluet.png",
+	"items": [
+		"minecraft:azure_bluet"
+	],
+	"physics": {
+		"gravity": 0.5,
+		"braking": 0.990,
+		"cursor_impulse_inherit_coefficient": 1.0
+	}
+}

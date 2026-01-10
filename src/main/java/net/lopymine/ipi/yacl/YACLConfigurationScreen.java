@@ -33,6 +33,11 @@ public class YACLConfigurationScreen {
 		return SimpleGroup.startBuilder("main_group").options(
 				SimpleOption.<Boolean>startBuilder("mod_enabled")
 						.withBinding(defConfig.isModEnabled(), config::isModEnabled, config::setModEnabled, false)
+						.withController()
+						.withDescription(SimpleContent.NONE),
+				SimpleOption.<Boolean>startBuilder("debug_log")
+						.withBinding(defConfig.isDebugLog(), config::isDebugLog, config::setDebugLog, false)
+						.withController()
 						.withDescription(SimpleContent.NONE)
 		);
 	}

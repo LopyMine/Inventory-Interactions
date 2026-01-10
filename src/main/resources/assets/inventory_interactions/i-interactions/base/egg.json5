@@ -1,0 +1,13 @@
+{
+	"base_texture": "egg.png",
+	"items": [
+		"minecraft:egg",
+		"minecraft:brown_egg",
+		"minecraft:blue_egg"
+	],
+	"physics": {
+		"gravity": 1.0,
+		"braking": 0.990,
+		"cursor_impulse_inherit_coefficient": 1.0
+	}
+}

@@ -1,0 +1,11 @@
+{
+	"base_texture": "brewing_stand.png",
+	"items": [
+		"minecraft:brewing_stand"
+	],
+	"physics": {
+		"gravity": 1.0,
+		"braking": 0.990,
+		"cursor_impulse_inherit_coefficient": 1.0
+	}
+}

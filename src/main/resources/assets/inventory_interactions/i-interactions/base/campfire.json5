@@ -1,0 +1,12 @@
+{
+	"base_texture": "campfire.png",
+	"items": [
+		"minecraft:campfire",
+		"minecraft:soul_campfire"
+	],
+	"physics": {
+		"gravity": 1.0,
+		"braking": 0.990,
+		"cursor_impulse_inherit_coefficient": 1.0
+	}
+}

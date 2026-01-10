@@ -1,0 +1,15 @@
+{
+	"base_texture": "bowl.png",
+	"items": [
+		"minecraft:bowl",
+		"minecraft:mushroom_stew",
+		"minecraft:rabbit_stew",
+		"minecraft:beetroot_soup",
+		"minecraft:suspicious_stew"
+	],
+	"physics": {
+		"gravity": 1.0,
+		"braking": 0.990,
+		"cursor_impulse_inherit_coefficient": 1.0
+	}
+}

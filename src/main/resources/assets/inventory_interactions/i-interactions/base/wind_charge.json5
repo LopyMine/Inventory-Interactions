@@ -1,0 +1,11 @@
+{
+	"base_texture": "wind_charge.png",
+	"items": [
+		"minecraft:wind_charge"
+	],
+	"physics": {
+		"gravity": 0.5,
+		"braking": 0.950,
+		"cursor_impulse_inherit_coefficient": 1.0
+	}
+}

@@ -1,0 +1,21 @@
+{
+	"base_texture": "lantern.png",
+	"items": [
+		"minecraft:lantern",
+		"minecraft:soul_lantern",
+		
+		"minecraft:copper_lantern",
+		"minecraft:exposed_copper_lantern",
+		"minecraft:weathered_copper_lantern",
+		"minecraft:oxidized_copper_lantern",
+		"minecraft:waxed_copper_lantern",
+		"minecraft:waxed_exposed_copper_lantern",
+		"minecraft:waxed_weathered_copper_lantern",
+		"minecraft:waxed_oxidized_copper_lantern"
+	],
+	"physics": {
+		"gravity": 1.0,
+		"braking": 0.990,
+		"cursor_impulse_inherit_coefficient": 1.0
+	}
+}

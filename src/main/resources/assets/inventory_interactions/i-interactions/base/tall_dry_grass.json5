@@ -1,0 +1,11 @@
+{
+	"base_texture": "tall_dry_grass.png",
+	"items": [
+		"minecraft:tall_dry_grass"
+	],
+	"physics": {
+		"gravity": 1.0,
+		"braking": 0.990,
+		"cursor_impulse_inherit_coefficient": 1.0
+	}
+}

@@ -1,0 +1,11 @@
+{
+	"base_texture": "leather.png",
+	"items": [
+		"minecraft:leather"
+	],
+	"physics": {
+		"gravity": 1.0,
+		"braking": 0.990,
+		"cursor_impulse_inherit_coefficient": 1.0
+	}
+}

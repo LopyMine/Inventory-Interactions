@@ -1,0 +1,17 @@
+{
+	"base_texture": "sword.png",
+	"items": [
+		"minecraft:wooden_sword",
+		"minecraft:stone_sword",
+		"minecraft:copper_sword",
+		"minecraft:iron_sword",
+		"minecraft:golden_sword",
+		"minecraft:diamond_sword",
+		"minecraft:netherite_sword"
+	],
+	"physics": {
+		"gravity": 1.0,
+		"braking": 0.990,
+		"cursor_impulse_inherit_coefficient": 1.0
+	}
+}

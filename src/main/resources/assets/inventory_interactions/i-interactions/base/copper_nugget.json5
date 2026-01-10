@@ -1,0 +1,11 @@
+{
+	"base_texture": "copper_nugget.png",
+	"items": [
+		"minecraft:copper_nugget"
+	],
+	"physics": {
+		"gravity": 0.5,
+		"braking": 0.990,
+		"cursor_impulse_inherit_coefficient": 1.0
+	}
+}

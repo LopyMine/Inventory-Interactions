@@ -1,0 +1,17 @@
+{
+	"base_texture": "shovel.png",
+	"items": [
+		"minecraft:wooden_shovel",
+		"minecraft:stone_shovel",
+		"minecraft:copper_shovel",
+		"minecraft:iron_shovel",
+		"minecraft:golden_shovel",
+		"minecraft:diamond_shovel",
+		"minecraft:netherite_shovel"
+	],
+	"physics": {
+		"gravity": 1.0,
+		"braking": 0.990,
+		"cursor_impulse_inherit_coefficient": 1.0
+	}
+}

@@ -1,0 +1,18 @@
+{
+	"base_texture": "helmet.png",
+	"items": [
+		"minecraft:leather_helmet",
+		"minecraft:copper_helmet",
+		"minecraft:chainmail_helmet",
+		"minecraft:iron_helmet",
+		"minecraft:golden_helmet",
+		"minecraft:diamond_helmet",
+		"minecraft:netherite_helmet",
+		"minecraft:turtle_helmet"
+	],
+	"physics": {
+		"gravity": 1.0,
+		"braking": 0.990,
+		"cursor_impulse_inherit_coefficient": 1.0
+	}
+}

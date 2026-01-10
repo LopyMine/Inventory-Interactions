@@ -1,0 +1,26 @@
+{
+	"base_texture": "harness.png",
+	"items": [
+		"minecraft:red_harness",
+		"minecraft:orange_harness",
+		"minecraft:yellow_harness",
+		"minecraft:lime_harness",
+		"minecraft:green_harness",
+		"minecraft:cyan_harness",
+		"minecraft:light_blue_harness",
+		"minecraft:blue_harness",
+		"minecraft:purple_harness",
+		"minecraft:magenta_harness",
+		"minecraft:pink_harness",
+		"minecraft:white_harness",
+		"minecraft:light_gray_harness",
+		"minecraft:gray_harness",
+		"minecraft:black_harness",
+		"minecraft:brown_harness"
+	],
+	"physics": {
+		"gravity": 1.0,
+		"braking": 0.990,
+		"cursor_impulse_inherit_coefficient": 1.0
+	}
+}

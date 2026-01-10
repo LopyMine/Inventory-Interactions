@@ -1,0 +1,17 @@
+{
+	"base_texture": "boots.png",
+	"items": [
+		"minecraft:leather_boots",
+		"minecraft:copper_boots",
+		"minecraft:chainmail_boots",
+		"minecraft:iron_boots",
+		"minecraft:golden_boots",
+		"minecraft:diamond_boots",
+		"minecraft:netherite_boots"
+	],
+	"physics": {
+		"gravity": 1.0,
+		"braking": 0.990,
+		"cursor_impulse_inherit_coefficient": 1.0
+	}
+}

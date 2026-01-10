@@ -1,0 +1,17 @@
+{
+	"base_texture": "hoe.png",
+	"items": [
+		"minecraft:wooden_hoe",
+		"minecraft:stone_hoe",
+		"minecraft:copper_hoe",
+		"minecraft:iron_hoe",
+		"minecraft:golden_hoe",
+		"minecraft:diamond_hoe",
+		"minecraft:netherite_hoe"
+	],
+	"physics": {
+		"gravity": 1.0,
+		"braking": 0.990,
+		"cursor_impulse_inherit_coefficient": 1.0
+	}
+}

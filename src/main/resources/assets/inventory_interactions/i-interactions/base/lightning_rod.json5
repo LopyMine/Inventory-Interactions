@@ -1,0 +1,27 @@
+{
+	"base_texture": "lightning_rod.png",
+	"items": [
+		"minecraft:lightning_rod",
+		"minecraft:exposed_lightning_rod",
+		"minecraft:weathered_lightning_rod",
+		"minecraft:oxidized_lightning_rod",
+		"minecraft:waxed_lightning_rod",
+		"minecraft:waxed_exposed_lightning_rod",
+		"minecraft:waxed_weathered_lightning_rod",
+		"minecraft:waxed_oxidized_lightning_rod",
+		
+		"minecraft:copper_golem_statue",
+		"minecraft:exposed_copper_golem_statue",
+		"minecraft:weathered_copper_golem_statue",
+		"minecraft:oxidized_copper_golem_statue",
+		"minecraft:waxed_copper_golem_statue",
+		"minecraft:waxed_exposed_copper_golem_statue",
+		"minecraft:waxed_weathered_copper_golem_statue",
+		"minecraft:waxed_oxidized_copper_golem_statue"
+	],
+	"physics": {
+		"gravity": 1.0,
+		"braking": 0.990,
+		"cursor_impulse_inherit_coefficient": 1.0
+	}
+}

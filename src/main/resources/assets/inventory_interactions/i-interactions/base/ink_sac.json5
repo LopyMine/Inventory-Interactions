@@ -1,0 +1,12 @@
+{
+	"base_texture": "ink_sac.png",
+	"items": [
+		"minecraft:ink_sac",
+		"minecraft:glow_ink_sac"
+	],
+	"physics": {
+		"gravity": 1.0,
+		"braking": 0.990,
+		"cursor_impulse_inherit_coefficient": 1.0
+	}
+}

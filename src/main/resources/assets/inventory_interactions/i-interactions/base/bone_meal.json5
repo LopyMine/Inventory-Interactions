@@ -1,0 +1,11 @@
+{
+	"base_texture": "bone_meal.png",
+	"items": [
+		"minecraft:bone_meal"
+	],
+	"physics": {
+		"gravity": 1.0,
+		"braking": 0.990,
+		"cursor_impulse_inherit_coefficient": 0.25
+	}
+}

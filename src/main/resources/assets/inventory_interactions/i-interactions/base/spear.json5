@@ -1,0 +1,17 @@
+{
+	"base_texture": "spear.png",
+	"items": [
+		"minecraft:wooden_spear",
+		"minecraft:stone_spear",
+		"minecraft:copper_spear",
+		"minecraft:iron_spear",
+		"minecraft:golden_spear",
+		"minecraft:diamond_spear",
+		"minecraft:netherite_spear"
+	],
+	"physics": {
+		"gravity": 1.0,
+		"braking": 0.990,
+		"cursor_impulse_inherit_coefficient": 1.0
+	}
+}

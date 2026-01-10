@@ -1,0 +1,11 @@
+{
+	"base_texture": "trident.png",
+	"items": [
+		"minecraft:trident"
+	],
+	"physics": {
+		"gravity": 1.5,
+		"braking": 1.0,
+		"cursor_impulse_inherit_coefficient": 0.8
+	}
+}

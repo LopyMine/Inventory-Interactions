@@ -1,0 +1,20 @@
+{
+	"base_texture": "banner_pattern.png",
+	"items": [
+		"minecraft:flower_banner_pattern",
+		"minecraft:creeper_banner_pattern",
+		"minecraft:skull_banner_pattern",
+		"minecraft:mojang_banner_pattern",
+		"minecraft:globe_banner_pattern",
+		"minecraft:piglin_banner_pattern",
+		"minecraft:flow_banner_pattern",
+		"minecraft:guster_banner_pattern",
+		"minecraft:bordure_indented_banner_pattern",
+		"minecraft:field_masoned_banner_pattern"
+	],
+	"physics": {
+		"gravity": 1.0,
+		"braking": 0.990,
+		"cursor_impulse_inherit_coefficient": 1.0
+	}
+}
