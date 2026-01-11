@@ -9,14 +9,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 import net.lopymine.ip.config.misc.CachedItem;
 import net.lopymine.ip.t2o.*;
 import net.lopymine.ipi.InventoryInteractions;
+import net.lopymine.ipi.client.InventoryInteractionsClient;
 import net.lopymine.ipi.config.base.*;
 import net.lopymine.ipi.config.base.model.*;
 import net.lopymine.ipi.config.physics.ItemPhysicsConfig;
 import net.lopymine.ipi.config.base.ItemOffset;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.item.*;
-import net.minecraft.resource.ResourceManager;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.Minecraft;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.Item;
 import org.jetbrains.annotations.NotNull;
 
 public class BaseConfigsManager {
@@ -37,26 +38,26 @@ public class BaseConfigsManager {
 	public static void reload() {
 		ITEM_MODELS.clear();
 
-		InventoryInteractions.LOGGER.info("Started registering particle configs from resources...");
-		ResourceManager resourceManager = MinecraftClient.getInstance().getResourceManager();
+		InventoryInteractionsClient.LOGGER.info("Started registering particle configs from resources...");
+		ResourceManager resourceManager = Minecraft.getInstance().getResourceManager();
 
 		AtomicInteger foundOffsets = new AtomicInteger();
 		AtomicInteger registeredConfigs = new AtomicInteger();
 
-		resourceManager.findResources(FOLDER_NAME, (id) -> id.getPath().endsWith(".json5") || id.getPath().endsWith(".json")).forEach((id, resource) -> {
+		resourceManager.listResources(FOLDER_NAME, (id) -> id.getPath().endsWith(".json5") || id.getPath().endsWith(".json")).forEach((id, resource) -> {
 			foundOffsets.getAndIncrement();
 
-			try (InputStream inputStream = resource.getInputStream(); BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
-				RawItemBaseConfig config = RawItemBaseConfig.CODEC.decode(JsonOps.INSTANCE, JsonParser.parseReader(reader))/*? if >=1.20.5 {*/.getOrThrow()/*?} else {*//*.getOrThrow(false, InventoryParticlesClient.LOGGER::error)*//*?}*/.getFirst();
+			try (InputStream inputStream = resource.open(); BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
+				RawItemBaseConfig config = RawItemBaseConfig.CODEC.decode(JsonOps.INSTANCE, JsonParser.parseReader(reader))/*? if >=1.20.5 {*/.getOrThrow()/*?} else {*//*.getOrThrow(false, InventoryInteractionsClient.LOGGER::error)*//*?}*/.getFirst();
 				registerItemOffsetFromConfig(config);
-				InventoryInteractions.LOGGER.debug("Registered item offset config at \"{}\"", id);
+				InventoryInteractionsClient.LOGGER.debug("Registered item offset config at \"{}\"", id);
 				registeredConfigs.getAndIncrement();
 			} catch (Exception e) {
-				InventoryInteractions.LOGGER.error("Failed to parse item offset config from \"{}\"! Reason:", id, e);
+				InventoryInteractionsClient.LOGGER.error("Failed to parse item offset config from \"{}\"! Reason:", id, e);
 			}
 		});
 
-		InventoryInteractions.LOGGER.info("Registering finished, found: {}, registered: {}", foundOffsets.get(), registeredConfigs.get());
+		InventoryInteractionsClient.LOGGER.info("Registering finished, found: {}, registered: {}", foundOffsets.get(), registeredConfigs.get());
 	}
 
 	private static void registerItemOffsetFromConfig(RawItemBaseConfig rawConfig) {

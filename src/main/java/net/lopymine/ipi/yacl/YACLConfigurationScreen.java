@@ -4,7 +4,7 @@ import lombok.experimental.ExtensionMethod;
 import net.lopymine.ipi.InventoryInteractions;
 import net.lopymine.mossylib.yacl.api.*;
 import net.lopymine.mossylib.yacl.extension.SimpleOptionExtension;
-import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screens.Screen;
 
 import net.lopymine.ipi.config.InventoryInteractionsConfig;
 
@@ -30,13 +30,13 @@ public class YACLConfigurationScreen {
 	}
 
 	private static SimpleGroup getMain(InventoryInteractionsConfig defConfig, InventoryInteractionsConfig config) {
-		return SimpleGroup.startBuilder("main_group").options(
+		return SimpleGroup.startBuilder("main").options(
 				SimpleOption.<Boolean>startBuilder("mod_enabled")
 						.withBinding(defConfig.isModEnabled(), config::isModEnabled, config::setModEnabled, false)
 						.withController()
 						.withDescription(SimpleContent.NONE),
-				SimpleOption.<Boolean>startBuilder("debug_log")
-						.withBinding(defConfig.isDebugLog(), config::isDebugLog, config::setDebugLog, false)
+				SimpleOption.<Boolean>startBuilder("debug_mode_enabled")
+						.withBinding(defConfig.isDebugModeEnabled(), config::isDebugModeEnabled, config::setDebugModeEnabled, false)
 						.withController()
 						.withDescription(SimpleContent.NONE)
 		);

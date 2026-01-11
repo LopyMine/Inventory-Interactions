@@ -7,7 +7,7 @@ import lombok.*;
 import net.lopymine.ipi.InventoryInteractions;
 import net.lopymine.ipi.config.physics.ItemPhysicsConfig;
 import net.lopymine.mossylib.utils.CodecUtils;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.Nullable;
 import static net.lopymine.ipi.config.base.RawItemBaseConfig.DEFAULT_BASE_TEXTURE;
 import static net.lopymine.mossylib.utils.CodecUtils.option;
@@ -17,7 +17,7 @@ import static net.lopymine.mossylib.utils.CodecUtils.option;
 @AllArgsConstructor
 public class RawItemModelConfig {
 
-	public static final Identifier NO_MODEL_TEXTURE = Identifier.of("");
+	public static final Identifier NO_MODEL_TEXTURE = InventoryInteractions.id("raw_item_model_no_texture");
 
 	public static final Codec<RawItemModelConfig> CODEC = CodecUtils.recursive(
 			"custom model config codec",
@@ -50,7 +50,7 @@ public class RawItemModelConfig {
 	}
 
 	public Identifier getBaseTextureInFolder() {
-		return Identifier.of(InventoryInteractions.MOD_ID, "textures/i-interactions/%s".formatted(this.baseTexture.getPath()));
+		return InventoryInteractions.id("textures/i-interactions/%s".formatted(this.baseTexture.getPath()));
 	}
 
 

@@ -4,7 +4,7 @@ import java.util.concurrent.*;
 import net.lopymine.ipi.InventoryInteractions;
 import net.lopymine.ipi.base.BaseConfigsManager;
 import net.lopymine.mossylib.reload.AbstractResourceReloadListener;
-import net.minecraft.resource.*;
+import net.minecraft.server.packs.resources.ResourceManager;
 
 public class InventoryInteractionsClientReloadListener extends AbstractResourceReloadListener {
 
@@ -14,7 +14,7 @@ public class InventoryInteractionsClientReloadListener extends AbstractResourceR
 	}
 
 	@Override
-	protected void reloadStuff(Synchronizer synchronizer, ResourceManager resourceManager, Executor executor, Executor executor1) {
+	protected void reloadStuff(PreparationBarrier synchronizer, ResourceManager resourceManager, Executor executor, Executor executor1) {
 		BaseConfigsManager.reload();
 	}
 

@@ -8,8 +8,9 @@ import net.lopymine.ip.renderer.InventoryParticlesRenderer;
 import net.lopymine.ipi.base.BaseConfigsManager;
 import net.lopymine.ipi.config.base.model.CursorItemModel;
 import net.lopymine.mossylib.extension.DrawContextExtension;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.item.*;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.world.item.*;
 
 @Getter
 @ExtensionMethod(DrawContextExtension.class)
@@ -26,7 +27,7 @@ public class CursorItemRenderer {
 		return INSTANCE;
 	}
 
-	public void render(DrawContext context, ItemStack stack, int mouseX, int mouseY, int originalX, int originalY, Renderer drawItem) {
+	public void render(GuiGraphics context, ItemStack stack, int mouseX, int mouseY, int originalX, int originalY, Renderer drawItem) {
 		Item item = stack.getItem();
 		if (item == Items.AIR) {
 			drawItem.run(originalX, originalY);
@@ -39,7 +40,17 @@ public class CursorItemRenderer {
 
 		this.update(stack.getItem(), cursor);
 
-		this.cursorItem.render(context, drawItem);
+		//? if >=1.21.5 {
+		float tickProgress = Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(true);
+		//?} elif >=1.21.4 {
+		/*float tickProgress = Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(true);
+		 *///?} elif >=1.21.1 {
+		/*float tickProgress = Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(true);
+		 *///?} else {
+		/*float tickProgress = Minecraft.getInstance().getFrameTime();
+		 *///?}
+
+		this.cursorItem.render(context, tickProgress, drawItem);
 	}
 
 	public void update(Item item, IMovableElement pivot) {

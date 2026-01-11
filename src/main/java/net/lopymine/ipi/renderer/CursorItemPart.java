@@ -11,11 +11,10 @@ import net.lopymine.ipi.config.physics.ItemPhysicsConfig;
 import net.lopymine.ipi.renderer.CursorItemRenderer.Renderer;
 import net.lopymine.mossylib.extension.DrawContextExtension;
 import net.lopymine.mossylib.utils.*;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.item.*;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.Mth;
+import net.minecraft.world.item.*;
 import org.jetbrains.annotations.Nullable;
 
 @Getter
@@ -95,9 +94,7 @@ public class CursorItemPart extends TickElement implements IMovableElement, IRot
 		this.overrideTexture = model.getModelTexture();
 	}
 
-	public void render(DrawContext context, Renderer drawItem) {
-		float tickProgress = MinecraftClient.getInstance().getRenderTickCounter().getTickProgress(false);
-
+	public void render(GuiGraphics context, float tickProgress, Renderer drawItem) {
 		float renderX = this.getRenderX(tickProgress);
 		float renderY = this.getRenderY(tickProgress);
 		float renderAngle = this.getRenderAngle(tickProgress);
@@ -118,12 +115,12 @@ public class CursorItemPart extends TickElement implements IMovableElement, IRot
 		this.renderDebugItemPosition(context, renderX, renderY);
 
 		if (this.part != null) {
-			this.part.render(context, drawItem);
+			this.part.render(context, tickProgress, drawItem);
 		}
 	}
 
-	private void renderDebugDots(DrawContext context, ItemOffset massCenter, ItemOffset grabCenter) {
-		if (!InventoryInteractionsConfig.getInstance().isDebugLog()) {
+	private void renderDebugDots(GuiGraphics context, ItemOffset massCenter, ItemOffset grabCenter) {
+		if (!InventoryInteractionsConfig.getInstance().isDebugModeEnabled()) {
 			return;
 		}
 		context.fill(0, 0, 1, 1, ArgbUtils.getArgb(255, 255, 255, 0));
@@ -131,8 +128,8 @@ public class CursorItemPart extends TickElement implements IMovableElement, IRot
 		context.fill(grabCenter.getOffsetX(), grabCenter.getOffsetY(), grabCenter.getOffsetX() + 1, grabCenter.getOffsetY() + 1, RawItemBaseConfig.PART_CONNECTION_COLOR);
 	}
 
-	private void renderDebugItemPosition(DrawContext context, float renderX, float renderY) {
-		if (!InventoryInteractionsConfig.getInstance().isDebugLog()) {
+	private void renderDebugItemPosition(GuiGraphics context, float renderX, float renderY) {
+		if (!InventoryInteractionsConfig.getInstance().isDebugModeEnabled()) {
 			return;
 		}
 		context.push();
@@ -142,7 +139,7 @@ public class CursorItemPart extends TickElement implements IMovableElement, IRot
 	}
 
 	public float getRenderAngle(float tickProgress) {
-		float angle = (float) (this.lastAngle + MathHelper.wrapDegrees(this.angle - this.lastAngle) * tickProgress);
+		float angle = (float) (this.lastAngle + Mth.wrapDegrees(this.angle - this.lastAngle) * tickProgress);
 		double localX = this.massCenter.x() - this.partConnectionCenter.x();
 		double localY = this.massCenter.y() - this.partConnectionCenter.y();
 		double localAngle = Math.toDegrees(Math.atan2(localY, localX));
@@ -150,11 +147,11 @@ public class CursorItemPart extends TickElement implements IMovableElement, IRot
 	}
 
 	public float getRenderX(float tickProgress) {
-		return (float) MathHelper.lerp(tickProgress, this.lastX, this.x);
+		return (float) Mth.lerp(tickProgress, this.lastX, this.x);
 	}
 
 	public float getRenderY(float tickProgress) {
-		return (float) MathHelper.lerp(tickProgress, this.lastY, this.y);
+		return (float) Mth.lerp(tickProgress, this.lastY, this.y);
 	}
 
 	private double normalize360(double angle) {

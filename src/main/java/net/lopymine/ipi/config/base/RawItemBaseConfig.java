@@ -9,7 +9,7 @@ import net.lopymine.ipi.InventoryInteractions;
 import net.lopymine.ipi.config.base.model.RawItemModelConfig;
 import net.lopymine.ipi.config.physics.ItemPhysicsConfig;
 import net.lopymine.mossylib.utils.ArgbUtils;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.Identifier;
 import static com.mojang.serialization.codecs.RecordCodecBuilder.create;
 import static net.lopymine.mossylib.utils.CodecUtils.option;
 
@@ -18,7 +18,7 @@ import static net.lopymine.mossylib.utils.CodecUtils.option;
 @AllArgsConstructor
 public class RawItemBaseConfig {
 
-	public static final Identifier DEFAULT_BASE_TEXTURE = Identifier.of("");
+	public static final Identifier DEFAULT_BASE_TEXTURE = InventoryInteractions.id("raw_item_base_config_default_texture");
 	public static final int PART_CONNECTION_COLOR = ArgbUtils.getArgb(255, 255, 0, 0);
 	public static final int NEXT_PART_CONNECTION_COLOR = ArgbUtils.getArgb(255, 255, 255, 0);
 	public static final int SHAPE_COLOR = ArgbUtils.getArgb(255, 0, 0, 255);
@@ -41,7 +41,7 @@ public class RawItemBaseConfig {
 	private RawItemModelConfig customModelConfig;
 
 	public Identifier getBaseTextureInFolder() {
-		return Identifier.of(InventoryInteractions.MOD_ID, "textures/i-interactions/%s".formatted(this.baseTexture.getPath()));
+		return InventoryInteractions.id("textures/i-interactions/%s".formatted(this.baseTexture.getPath()));
 	}
 
 }

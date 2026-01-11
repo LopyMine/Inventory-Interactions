@@ -3,7 +3,7 @@ package net.lopymine.ipi.modmenu;
 import net.lopymine.ipi.InventoryInteractions;
 import net.lopymine.ipi.yacl.YACLConfigurationScreen;
 import net.lopymine.mossylib.modmenu.AbstractModMenuIntegration;
-import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screens.Screen;
 
 public class ModMenuIntegration extends AbstractModMenuIntegration {
 

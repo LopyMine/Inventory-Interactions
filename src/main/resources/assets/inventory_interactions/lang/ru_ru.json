@@ -1,24 +1,16 @@
 {
-	"modmenu.descriptionTranslation.${mod_id}": "Шаблонный Fabric мод с несколькими дополнительными фишками для моих проектов.",
-	"${mod_id}.modmenu.title": "§l Конфигурация ${mod_name}",
-	"${mod_id}.modmenu.no_config_library_screen.message": "Вам необходимо установить §6§lYet Another Config Lib [YACL]§f, чтобы открыть экран конфигурации ${mod_name} \n\n§a§lОткрыть страницу §6§lYACL §a§lна Modrinth?",
+	"modmenu.descriptionTranslation.${mod_id}": "Аддон для Inventory Particles, который добавляет различного рода взаимодействия с вашими предметами в инвентаре!",
+	"${mod_id}.modmenu.title": "§l${mod_name} Конфигурация",
 
-	"${mod_id}.modmenu.category.secret_category.name": "§lСекрет",
+	"${mod_id}.modmenu.category.general.name": "Основное",
 
-	"${mod_id}.modmenu.group.secret_group.name": "§lСекретная группа",
-	"${mod_id}.modmenu.group.secret_group.description": "Пример описание секретной группы.",
+	"${mod_id}.modmenu.group.main.name": "Главное",
+	"${mod_id}.modmenu.group.main.description": "Главные настройки.",
 
-	"${mod_id}.modmenu.option.secret_option.name": "Секретная опция",
-	"${mod_id}.modmenu.option.secret_option.description": "Пример описания секретной опции.",
+	"${mod_id}.modmenu.option.mod_enabled.name": "Включить мод",
+	"${mod_id}.modmenu.option.mod_enabled.description": "Если включено, взаимодействия с предметами будут происходить; если отключено, не будут.",
 
-	"${mod_id}.modmenu.category.general.name": "§lОсновное",
+	"${mod_id}.modmenu.option.debug_mode_enabled.name": "Включить режим отладки",
+	"${mod_id}.modmenu.option.debug_mode_enabled.description": "Если включено, вы сможете увидеть некоторую информацию для отладки мода; если отключено, не сможете."
 
-	"${mod_id}.modmenu.group.mossy_group.name": "§lМшистая группа",
-	"${mod_id}.modmenu.group.mossy_group.description": "Пример мшистого описания группы.",
-
-	"${mod_id}.modmenu.option.mossy_option.name": "Пушистая опция",
-	"${mod_id}.modmenu.option.mossy_option.description": "Пример пушистого описания опции.",
-
-	"${mod_id}.modmenu.formatter.enabled_or_disabled.true": "Включено",
-	"${mod_id}.modmenu.formatter.enabled_or_disabled.false": "Отключено"
 }

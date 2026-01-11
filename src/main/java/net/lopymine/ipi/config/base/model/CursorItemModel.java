@@ -3,8 +3,8 @@ package net.lopymine.ipi.config.base.model;
 import lombok.*;
 import net.lopymine.ipi.config.base.ItemOffset;
 import net.lopymine.ipi.config.physics.ItemPhysicsConfig;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.Mth;
 import org.jetbrains.annotations.Nullable;
 
 @Getter
@@ -29,14 +29,20 @@ public class CursorItemModel {
 
 	public CursorItemModel(@Nullable Identifier modelTexture, ItemOffset partConnectionCenter, @Nullable ItemOffset nextPartConnectionCenter, ItemOffset massCenter, ItemPhysicsConfig physicsConfig, @Nullable CursorItemModel partModel) {
 		this.modelTexture             = modelTexture;
-		this.partConnectionCenter     = partConnectionCenter;
+		// todo remove me later after updating Inventory Particles to 1.3.3!!!
+		//? if >=1.21.4 {
+		this.partConnectionCenter = partConnectionCenter;
+		this.massCenter           = massCenter;
+		//?} else {
+		/*this.partConnectionCenter     = massCenter;
+		this.massCenter               = partConnectionCenter;
+		*///?}
 		this.nextPartConnectionCenter = nextPartConnectionCenter;
-		this.massCenter               = massCenter;
 		this.physicsConfig            = physicsConfig;
 		this.partModel                = partModel;
-		int x = MathHelper.abs(massCenter.x() - partConnectionCenter.x());
-		int y = MathHelper.abs(massCenter.y() - partConnectionCenter.y());
-		double h = MathHelper.hypot(x, y);
+		int x = Mth.abs(massCenter.x() - partConnectionCenter.x());
+		int y = Mth.abs(massCenter.y() - partConnectionCenter.y());
+		double h = Mth.length(x, y);
 		if (h == 0) {
 			h = 16.0F;
 		}

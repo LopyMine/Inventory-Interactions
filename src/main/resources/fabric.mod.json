@@ -16,10 +16,10 @@
     "environment": "*",
     "entrypoints": {
         "main": [
-	        "net.lopymine.ipi.InventoryInteractions"
+	        "net.lopymine.ipi.entrypoint.FabricEntrypoint"
         ],
         "client": [
-	        "net.lopymine.ipi.client.InventoryInteractionsClient"
+	        "net.lopymine.ipi.entrypoint.FabricClientEntrypoint"
         ],
         "modmenu": [
 	        "net.lopymine.ipi.modmenu.ModMenuIntegration"

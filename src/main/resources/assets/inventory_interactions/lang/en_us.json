@@ -1,24 +1,16 @@
 {
 	"modmenu.descriptionTranslation.${mod_id}": "${mod_description}",
 	"${mod_id}.modmenu.title": "§l${mod_name} Configuration",
-	"${mod_id}.modmenu.no_config_library_screen.message": "You need to install §6§lYet Another Config Lib [YACL]§f to open ${mod_name} Configuration Screen\n\n§a§lOpen §6§lYACL §a§lModrinth page?",
 
-	"${mod_id}.modmenu.category.secret_category.name": "§lSecret",
+	"${mod_id}.modmenu.category.general.name": "General",
 
-	"${mod_id}.modmenu.group.secret_group.name": "§lSecret Group",
-	"${mod_id}.modmenu.group.secret_group.description": "Example Secret Group Description.",
+	"${mod_id}.modmenu.group.main.name": "Main",
+	"${mod_id}.modmenu.group.main.description": "Main settings.",
 
-	"${mod_id}.modmenu.option.secret_option.name": "Secret Option",
-	"${mod_id}.modmenu.option.secret_option.description": "Example Secret Option Description.",
+	"${mod_id}.modmenu.option.mod_enabled.name": "Mod Enabled",
+	"${mod_id}.modmenu.option.mod_enabled.description": "If enabled, you will see item interactions in your inventory; if disabled, won't.",
 
-	"${mod_id}.modmenu.category.general.name": "§lGeneral",
+	"${mod_id}.modmenu.option.debug_mode_enabled.name": "Debug Mode Enabled",
+	"${mod_id}.modmenu.option.debug_mode_enabled.description": "If enabled, you will see some debug info; if disabled, won't."
 
-	"${mod_id}.modmenu.group.mossy_group.name": "§lMossy Group",
-	"${mod_id}.modmenu.group.mossy_group.description": "Example Mossy Group Description.",
-
-	"${mod_id}.modmenu.option.mossy_option.name": "Mossy Option",
-	"${mod_id}.modmenu.option.mossy_option.description": "Example Mossy Option Description.",
-
-	"${mod_id}.modmenu.formatter.enabled_or_disabled.true": "Enabled",
-	"${mod_id}.modmenu.formatter.enabled_or_disabled.false": "Disabled"
 }
