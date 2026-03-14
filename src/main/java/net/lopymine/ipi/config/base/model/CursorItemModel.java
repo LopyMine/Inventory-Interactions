@@ -29,14 +29,8 @@ public class CursorItemModel {
 
 	public CursorItemModel(@Nullable Identifier modelTexture, ItemOffset partConnectionCenter, @Nullable ItemOffset nextPartConnectionCenter, ItemOffset massCenter, ItemPhysicsConfig physicsConfig, @Nullable CursorItemModel partModel) {
 		this.modelTexture             = modelTexture;
-		// todo remove me later after updating Inventory Particles to 1.3.3!!!
-		//? if >=1.21.4 {
 		this.partConnectionCenter = partConnectionCenter;
 		this.massCenter           = massCenter;
-		//?} else {
-		/*this.partConnectionCenter     = massCenter;
-		this.massCenter               = partConnectionCenter;
-		*///?}
 		this.nextPartConnectionCenter = nextPartConnectionCenter;
 		this.physicsConfig            = physicsConfig;
 		this.partModel                = partModel;

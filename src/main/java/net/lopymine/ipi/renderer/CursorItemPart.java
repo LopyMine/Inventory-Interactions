@@ -85,7 +85,7 @@ public class CursorItemPart extends TickElement implements IMovableElement, IRot
 		if (partModel != null) {
 			CursorItemPart part = new CursorItemPart();
 
-			ItemOffset offset = this.nextPartConnectionCenter == null ? BaseConfigsManager.NO_PART_CONNECTION_POS : this.nextPartConnectionCenter;
+			ItemOffset offset = this.nextPartConnectionCenter == null ? BaseConfigsManager.STANDARD_MIDDLE_PART_CONNECTION_POS : this.nextPartConnectionCenter;
 
 			part.reset(item, partModel, this.x + offset.getOffsetX(), this.y + offset.getOffsetY());
 			this.part = part;

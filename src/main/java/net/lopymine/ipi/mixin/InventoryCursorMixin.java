@@ -1,6 +1,6 @@
 package net.lopymine.ipi.mixin;
 
-import net.lopymine.ip.element.InventoryCursor;
+import net.lopymine.ip.element.mod.InventoryCursor;
 import net.lopymine.ipi.config.InventoryInteractionsConfig;
 import net.lopymine.ipi.renderer.CursorItemRenderer;
 import net.minecraft.world.item.ItemStack;

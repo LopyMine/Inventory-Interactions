@@ -3,7 +3,7 @@ package net.lopymine.ipi.mixin;
 import com.llamalad7.mixinextras.injector.wrapoperation.*;
 import com.llamalad7.mixinextras.sugar.Local;
 import lombok.experimental.ExtensionMethod;
-import net.lopymine.ip.element.InventoryCursor;
+import net.lopymine.ip.element.mod.InventoryCursor;
 import net.lopymine.ip.renderer.InventoryParticlesRenderer;
 import net.lopymine.ipi.config.InventoryInteractionsConfig;
 import net.lopymine.ipi.renderer.CursorItemRenderer;

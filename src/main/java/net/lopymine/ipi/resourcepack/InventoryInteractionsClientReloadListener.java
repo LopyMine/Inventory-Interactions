@@ -15,7 +15,7 @@ public class InventoryInteractionsClientReloadListener extends AbstractResourceR
 
 	@Override
 	protected void reloadStuff(PreparationBarrier synchronizer, ResourceManager resourceManager, Executor executor, Executor executor1) {
-		BaseConfigsManager.reload();
+		BaseConfigsManager.getInstance().reload();
 	}
 
 }

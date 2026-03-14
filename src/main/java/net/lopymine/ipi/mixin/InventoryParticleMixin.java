@@ -2,10 +2,9 @@ package net.lopymine.ipi.mixin;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.*;
 import com.llamalad7.mixinextras.sugar.Local;
-import net.lopymine.ip.controller.speed.SpeedController;
-import net.lopymine.ip.element.InventoryParticle;
-import net.lopymine.ip.spawner.*;
-import net.lopymine.ip.spawner.context.ParticleSpawnContext;
+import net.lopymine.ip.element.mod.InventoryParticle;
+import net.lopymine.ip.element.mod.spawner.*;
+import net.lopymine.ip.element.mod.spawner.context.ParticleSpawnContext;
 import net.lopymine.ipi.config.InventoryInteractionsConfig;
 import net.lopymine.ipi.config.base.ItemOffset;
 import net.lopymine.ipi.renderer.*;
@@ -20,7 +19,7 @@ public class InventoryParticleMixin {
 
 	@Shadow private @Nullable ParticleSpawnArea spawnArea;
 
-	@WrapOperation(at = @At(value = "INVOKE", target = "Lnet/lopymine/ip/spawner/ParticleSpawner;offsetParticlePos(Lnet/lopymine/ip/element/InventoryParticle;)V", remap = false), method = "createParticles(ILnet/lopymine/ip/spawner/context/ParticleSpawnContext;Ljava/util/function/Consumer;)Ljava/util/List;", remap = false)
+	@WrapOperation(at = @At(value = "INVOKE", target = "Lnet/lopymine/ip/element/mod/spawner/ParticleSpawner;offsetParticlePos(Lnet/lopymine/ip/element/mod/InventoryParticle;)V", remap = false), method = "createParticles(ILnet/lopymine/ip/element/mod/spawner/context/ParticleSpawnContext;Ljava/util/function/Consumer;)Ljava/util/List;", remap = false)
 	private void offsetParticlePosWithRotation(ParticleSpawner instance, InventoryParticle particle, Operation<Void> original, @Local(argsOnly = true) ParticleSpawnContext context) {
 		if (!InventoryInteractionsConfig.getInstance().isModEnabled()) {
 			original.call(instance, particle);

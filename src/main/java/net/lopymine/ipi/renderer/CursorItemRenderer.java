@@ -2,8 +2,8 @@ package net.lopymine.ipi.renderer;
 
 import lombok.Getter;
 import lombok.experimental.ExtensionMethod;
-import net.lopymine.ip.element.InventoryCursor;
 import net.lopymine.ip.element.base.IMovableElement;
+import net.lopymine.ip.element.mod.InventoryCursor;
 import net.lopymine.ip.renderer.InventoryParticlesRenderer;
 import net.lopymine.ipi.base.BaseConfigsManager;
 import net.lopymine.ipi.config.base.model.CursorItemModel;

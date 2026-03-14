@@ -1,1 +1,2 @@
-Release version
+- Updated for Inventory Particles >=v1.5.0
+- Changed default grab position for items without a config

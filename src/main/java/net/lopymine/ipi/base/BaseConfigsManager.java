@@ -1,30 +1,25 @@
 package net.lopymine.ipi.base;
 
-import com.google.gson.JsonParser;
-import com.mojang.serialization.JsonOps;
-import java.io.*;
-import java.nio.charset.StandardCharsets;
+import com.mojang.serialization.*;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 import net.lopymine.ip.config.misc.CachedItem;
+import net.lopymine.ip.resourcepack.manager.AbstractConfigsManager;
 import net.lopymine.ip.t2o.*;
-import net.lopymine.ipi.InventoryInteractions;
 import net.lopymine.ipi.client.InventoryInteractionsClient;
 import net.lopymine.ipi.config.base.*;
 import net.lopymine.ipi.config.base.model.*;
 import net.lopymine.ipi.config.physics.ItemPhysicsConfig;
 import net.lopymine.ipi.config.base.ItemOffset;
-import net.minecraft.client.Minecraft;
-import net.minecraft.server.packs.resources.ResourceManager;
+import net.lopymine.mossylib.logger.MossyLogger;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import org.jetbrains.annotations.NotNull;
 
-public class BaseConfigsManager {
+public class BaseConfigsManager extends AbstractConfigsManager<RawItemBaseConfig> {
 
-	public static final ItemOffset NO_PART_CONNECTION_POS = new ItemOffset(0, 0, 16, 16);
-	public static final ItemOffset MIDDLE_CENTER = new ItemOffset(8, 8, 16, 16);
-	public static final CursorItemModel STANDARD_MODEL = new CursorItemModel(NO_PART_CONNECTION_POS, MIDDLE_CENTER, ItemPhysicsConfig.getNewInstance().get());
+	public static final ItemOffset STANDARD_MIDDLE_PART_CONNECTION_POS = new ItemOffset(8, 8, 16, 16);
+	public static final ItemOffset STANDARD_MIDDLE_BOTTOM_MASS_POS = new ItemOffset(8, 16, 16, 16);
+	public static final CursorItemModel STANDARD_MODEL = new CursorItemModel(STANDARD_MIDDLE_PART_CONNECTION_POS, STANDARD_MIDDLE_BOTTOM_MASS_POS, ItemPhysicsConfig.getNewInstance().get());
 
 	private static final Texture2ObjectPixelFilter NEXT_PART_CONNECTION_TEXTURE_FILTER = getColorFilter(RawItemBaseConfig.NEXT_PART_CONNECTION_COLOR);
 	private static final Texture2ObjectPixelFilter PART_CONNECTION_TEXTURE_FILTER = getColorFilter(RawItemBaseConfig.PART_CONNECTION_COLOR);
@@ -32,35 +27,41 @@ public class BaseConfigsManager {
 
 	private static final Texture2Object<ItemOffset> PIXEL_POSITION = (x, y, imageWidth, imageHeight, color) -> new ItemOffset(x, y, imageWidth, imageHeight);
 
-	public static final String FOLDER_NAME = "i-interactions/base";
 	public static Map<Item, CursorItemModel> ITEM_MODELS = new HashMap<>();
 
-	public static void reload() {
-		ITEM_MODELS.clear();
+	private static final BaseConfigsManager INSTANCE = new BaseConfigsManager();
 
-		InventoryInteractionsClient.LOGGER.info("Started registering particle configs from resources...");
-		ResourceManager resourceManager = Minecraft.getInstance().getResourceManager();
-
-		AtomicInteger foundOffsets = new AtomicInteger();
-		AtomicInteger registeredConfigs = new AtomicInteger();
-
-		resourceManager.listResources(FOLDER_NAME, (id) -> id.getPath().endsWith(".json5") || id.getPath().endsWith(".json")).forEach((id, resource) -> {
-			foundOffsets.getAndIncrement();
-
-			try (InputStream inputStream = resource.open(); BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
-				RawItemBaseConfig config = RawItemBaseConfig.CODEC.decode(JsonOps.INSTANCE, JsonParser.parseReader(reader))/*? if >=1.20.5 {*/.getOrThrow()/*?} else {*//*.getOrThrow(false, InventoryInteractionsClient.LOGGER::error)*//*?}*/.getFirst();
-				registerItemOffsetFromConfig(config);
-				InventoryInteractionsClient.LOGGER.debug("Registered item offset config at \"{}\"", id);
-				registeredConfigs.getAndIncrement();
-			} catch (Exception e) {
-				InventoryInteractionsClient.LOGGER.error("Failed to parse item offset config from \"{}\"! Reason:", id, e);
-			}
-		});
-
-		InventoryInteractionsClient.LOGGER.info("Registering finished, found: {}, registered: {}", foundOffsets.get(), registeredConfigs.get());
+	public static BaseConfigsManager getInstance() {
+		return INSTANCE;
 	}
 
-	private static void registerItemOffsetFromConfig(RawItemBaseConfig rawConfig) {
+	public void reload() {
+		ITEM_MODELS.clear();
+		super.reload();
+	}
+
+	@Override
+	protected String getFolderName() {
+		return "i-interactions/base";
+	}
+
+	@Override
+	protected Codec<RawItemBaseConfig> getCodec() {
+		return RawItemBaseConfig.CODEC;
+	}
+
+	@Override
+	protected String getConfigName() {
+		return "particle base rotation config";
+	}
+
+	@Override
+	protected MossyLogger getLogger() {
+		return InventoryInteractionsClient.LOGGER;
+	}
+
+	@Override
+	protected void registerConfig(RawItemBaseConfig rawConfig, Identifier identifier) {
 		CursorItemModel model;
 		if (rawConfig.getCustomModelConfig() != RawItemModelConfig.DUMMY_MODEL) {
 			model = createCustomCursorItemModel(rawConfig.getCustomModelConfig());
@@ -97,19 +98,19 @@ public class BaseConfigsManager {
 				 "part connection center",
 				PART_CONNECTION_TEXTURE_FILTER,
 				PIXEL_POSITION
-		)).filter((list) -> !list.isEmpty()).map((list) -> findCenter(list, NO_PART_CONNECTION_POS)).orElse(NO_PART_CONNECTION_POS);
+		)).filter((list) -> !list.isEmpty()).map((list) -> findCenter(list, STANDARD_MIDDLE_PART_CONNECTION_POS)).orElse(STANDARD_MIDDLE_PART_CONNECTION_POS);
 
 		ItemOffset nextPartConnectionCenter = Optional.of(Texture2ObjectsManager.readFromTexture(baseTexture,
 				"next part connection center",
 				NEXT_PART_CONNECTION_TEXTURE_FILTER,
 				PIXEL_POSITION
-		)).filter((list) -> !list.isEmpty()).map((list) -> findCenter(list, NO_PART_CONNECTION_POS)).orElse(NO_PART_CONNECTION_POS);
+		)).filter((list) -> !list.isEmpty()).map((list) -> findCenter(list, STANDARD_MIDDLE_PART_CONNECTION_POS)).orElse(STANDARD_MIDDLE_PART_CONNECTION_POS);
 
 		ItemOffset massCenter = Optional.of(Texture2ObjectsManager.readFromTexture(baseTexture,
 				"mass center position",
 				SHAPE_TEXTURE_FILTER,
 				PIXEL_POSITION
-		)).filter((list) -> !list.isEmpty()).map((list) -> findCenter(list, MIDDLE_CENTER)).orElse(MIDDLE_CENTER);
+		)).filter((list) -> !list.isEmpty()).map((list) -> findCenter(list, STANDARD_MIDDLE_BOTTOM_MASS_POS)).orElse(STANDARD_MIDDLE_BOTTOM_MASS_POS);
 
 		return new ParsedBaseTexture(partConnectionCenter, nextPartConnectionCenter, massCenter);
 	}
