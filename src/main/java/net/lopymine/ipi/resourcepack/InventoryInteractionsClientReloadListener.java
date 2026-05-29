@@ -2,7 +2,7 @@ package net.lopymine.ipi.resourcepack;
 
 import java.util.concurrent.*;
 import net.lopymine.ipi.InventoryInteractions;
-import net.lopymine.ipi.base.BaseConfigsManager;
+import net.lopymine.ipi.resourcepack.base.BaseConfigsManager;
 import net.lopymine.mossylib.reload.AbstractResourceReloadListener;
 import net.minecraft.server.packs.resources.ResourceManager;
 

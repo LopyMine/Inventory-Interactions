@@ -9,11 +9,11 @@
     ],
     "contact": {
         "homepage": "https://modrinth.com/mod/${mod_id}",
-        "issues": "https://github.com/LopyMine/${mod_id}"
+        "issues": "https://github.com/${github_author}/${mod_id}"
     },
     "license": "${mod_license}",
     "icon": "icon/icon.png",
-    "environment": "*",
+	"environment": "${fabric_trick_side}",
     "entrypoints": {
         "main": [
 	        "net.lopymine.ipi.entrypoint.FabricEntrypoint"
@@ -33,7 +33,7 @@
         "java": ">=${java}",
         "${fabric_api_id}": "*"
     },
-	"accessWidener": "aws/fabric-${minecraft}.accesswidener",
+	"accessWidener": "${fabric_trick_accesswidener_id}",
 	"mixins": [
 		"${fabric_trick_mixin_configs}"
 	]

@@ -1,9 +1,11 @@
 package net.lopymine.ipi.renderer;
 
+import java.util.List;
 import lombok.*;
 import lombok.experimental.ExtensionMethod;
 import net.lopymine.ip.element.base.*;
-import net.lopymine.ipi.base.BaseConfigsManager;
+import net.lopymine.ipi.family.generation.BaseTextureGenerationManager;
+import net.lopymine.ipi.resourcepack.base.BaseConfigsManager;
 import net.lopymine.ipi.config.InventoryInteractionsConfig;
 import net.lopymine.ipi.config.base.*;
 import net.lopymine.ipi.config.base.model.CursorItemModel;
@@ -126,6 +128,12 @@ public class CursorItemPart extends TickElement implements IMovableElement, IRot
 		context.fill(0, 0, 1, 1, ArgbUtils.getArgb(255, 255, 255, 0));
 		context.fill(massCenter.getOffsetX(), massCenter.getOffsetY(), massCenter.getOffsetX() + 2, massCenter.getOffsetY() + 2, RawItemBaseConfig.SHAPE_COLOR);
 		context.fill(grabCenter.getOffsetX(), grabCenter.getOffsetY(), grabCenter.getOffsetX() + 1, grabCenter.getOffsetY() + 1, RawItemBaseConfig.PART_CONNECTION_COLOR);
+		List<ItemOffset> offsets = BaseTextureGenerationManager.ITEM_SEPARATORS.get(this.item);
+		if (offsets != null) {
+			for (ItemOffset offset : offsets) {
+				context.fill(offset.getOffsetX(), offset.getOffsetY(), offset.getOffsetX() + 1, offset.getOffsetY() + 1, ArgbUtils.getArgb(255, 0, 255, 0));
+			}
+		}
 	}
 
 	private void renderDebugItemPosition(GuiGraphics context, float renderX, float renderY) {
@@ -245,10 +253,41 @@ public class CursorItemPart extends TickElement implements IMovableElement, IRot
 			double acceleration = cursorAccelerationX * dx + cursorAccelerationY * dy;
 
 			double impulse = 0.1 * this.physicsConfig.getCursorImpulseInheritCoefficient();
-			this.x += dx * acceleration * impulse;
-			this.y += dy * acceleration * impulse;
+
+			//double grabInfluence = this.computeGrabInfluenceCoefficient();
+
+			this.x += dx * acceleration * impulse; //* grabInfluence;
+			this.y += dy * acceleration * impulse; //* grabInfluence;
 		}
 	}
+
+//	private double computeGrabInfluenceCoefficient() {
+//		double gx = this.massCenter.getOffsetX() - this.partConnectionCenter.getOffsetX();
+//		double gy = this.massCenter.getOffsetY() - this.partConnectionCenter.getOffsetY();
+//		double distance = Math.sqrt(gx * gx + gy * gy);
+//
+//		double minDistance = 2.0;
+//		double maxDistance = 12.0;
+//		double minCoefficient = 0.01;
+//		double maxCoefficient = 1.0;
+//
+//		if (distance <= minDistance) {
+//			return minCoefficient;
+//		}
+//		if (distance >= maxDistance) {
+//			return maxCoefficient;
+//		}
+//
+//		double t = (distance - minDistance) / (maxDistance - minDistance); // 0..1
+//		double coef = minCoefficient + t * (maxCoefficient - minCoefficient);
+//		if (coef < minCoefficient) {
+//			coef = minCoefficient;
+//		}
+//		if (coef > maxCoefficient) {
+//			coef = maxCoefficient;
+//		}
+//		return coef;
+//	}
 
 	public boolean isItemChanged(Item item) {
 		return this.item != item;

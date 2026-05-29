@@ -1,21 +1,21 @@
 package net.lopymine.ipi.config.base;
 
-public record ItemOffset(int x, int y, int width, int height) {
+public record ItemOffset(double x, double y, double width, double height) {
 
-	public int getOffsetX() {
+	public double getOffsetX() {
 		return this.x() - this.getDimensionOffsetX();
 	}
 
-	public int getOffsetY() {
+	public double getOffsetY() {
 		return this.y() - this.getDimensionOffsetY();
 	}
 
-	public int getDimensionOffsetX() {
-		return (this.width - 16) / 2;
+	public double getDimensionOffsetX() {
+		return (this.width - 16D) / 2D;
 	}
 
-	public int getDimensionOffsetY() {
-		return (this.height - 16) / 2;
+	public double getDimensionOffsetY() {
+		return (this.height - 16D) / 2D;
 	}
 
 }

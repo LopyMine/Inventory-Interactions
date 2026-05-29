@@ -30,13 +30,13 @@ public class RawItemBaseConfig {
 
 	public static final Codec<RawItemBaseConfig> CODEC = create((instance) -> instance.group(
 			option("base_texture", DEFAULT_BASE_TEXTURE, Identifier.CODEC, RawItemBaseConfig::getBaseTexture),
-			option("items", new ArrayList<>(), CACHED_ITEMS_CODEC, RawItemBaseConfig::getCachedItems),
+			option("items", new ArrayList<>(), CACHED_ITEMS_CODEC, RawItemBaseConfig::getItems),
 			option("physics", ItemPhysicsConfig.getNewInstance(), ItemPhysicsConfig.CODEC, RawItemBaseConfig::getPhysicsConfig),
 			option("custom_model", RawItemModelConfig.DUMMY_MODEL, RawItemModelConfig.CODEC, RawItemBaseConfig::getCustomModelConfig)
 	).apply(instance, RawItemBaseConfig::new));
 
 	private Identifier baseTexture;
-	private List<CachedItem> cachedItems;
+	private List<CachedItem> items;
 	private ItemPhysicsConfig physicsConfig;
 	private RawItemModelConfig customModelConfig;
 

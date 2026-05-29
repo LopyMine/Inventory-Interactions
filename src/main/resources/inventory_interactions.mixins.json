@@ -4,11 +4,13 @@
 	"refmap": "${mod_id}.refmap.json",
 	"compatibilityLevel": "JAVA_${java}",
 	"mixins": [
+		"ParticlesConfigsManagerMixin",
+		"ParticlesLinkingInfoMixin"
 	],
 	"client": [
 		"HandledScreenMixin",
-		"InventoryParticleMixin",
-		"InventoryCursorMixin"
+		"InventoryCursorMixin",
+		"InventoryParticleMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

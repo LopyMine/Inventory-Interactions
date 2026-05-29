@@ -21,7 +21,15 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(value = AbstractContainerScreen.class, priority = 950)
 public class HandledScreenMixin {
 
-	//? if >=1.21.6 {
+	//? if >=26.1 {
+	/*@WrapOperation(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/inventory/AbstractContainerScreen;extractFloatingItem(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/world/item/ItemStack;IILjava/lang/String;)V"), method = "extractCarriedItem")
+	private void offsetItem(AbstractContainerScreen<?> instance, GuiGraphics context, ItemStack stack, int x, int y, String amountText, Operation<Void> original, @Local(argsOnly = true, ordinal = 0) int mouseX, @Local(argsOnly = true, ordinal = 1) int mouseY) {
+		if (!InventoryInteractionsConfig.getInstance().isModEnabled()) {
+			return;
+		}
+		CursorItemRenderer.getInstance().render(context, stack, mouseX, mouseY, x, y, (mx, my) -> original.call(instance, context, stack, mx, my, amountText));
+	}
+	*///?} elif >=1.21.6 {
 	@WrapOperation(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/inventory/AbstractContainerScreen;renderFloatingItem(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/world/item/ItemStack;IILjava/lang/String;)V"), method = "renderCarriedItem")
 	private void offsetItem(AbstractContainerScreen<?> instance, GuiGraphics context, ItemStack stack, int x, int y, String amountText, Operation<Void> original, @Local(argsOnly = true, ordinal = 0) int mouseX, @Local(argsOnly = true, ordinal = 1) int mouseY) {
 		if (!InventoryInteractionsConfig.getInstance().isModEnabled()) {

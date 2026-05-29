@@ -49,15 +49,6 @@ public class BaseTextureGenerationManager {
 	private static @NonNull ItemOffset getPartConnectionCenter(Identifier itemId, Item item, NativeImage image, ItemOffset massCenter) {
 		List<SplitResult> list = new ArrayList<>();
 
-		if ("minecraft:trident".equals(itemId.toString())) {
-			InventoryInteractions.LOGGER.info(
-					"trident massCenter {}, {}, diag45Divider {}",
-					(massCenter.getOffsetX() + 0.5D),
-					(massCenter.getOffsetY() + 0.5D),
-					getDiagonal45Divider(image.getWidth(), image.getHeight(), massCenter)
-			);
-		}
-
 		for (ImageSplitter value : ImageSplitter.values()) {
 			list.add(new SplitResult(getSymmetry(value.splitImage(image, massCenter), value, massCenter), value));
 		}
@@ -137,14 +128,14 @@ public class BaseTextureGenerationManager {
 
 		switch (splitter) {
 			case HORIZONTAL -> {
-				for (int y : getNearestAxisIndexes((massCenter.getOffsetY() + 0.5D), image.getHeight())) {
+				for (int y : getAxisLineIndexes((massCenter.getOffsetY() + 0.5D), image.getHeight())) {
 					for (int x = 0; x < image.getWidth(); x++) {
 						addLineOffset(image, x, y, offsets, fallbackOffsets);
 					}
 				}
 			}
 			case VERTICAL -> {
-				for (int x : getNearestAxisIndexes((massCenter.getOffsetX() + 0.5D), image.getWidth())) {
+				for (int x : getAxisLineIndexes((massCenter.getOffsetX() + 0.5D), image.getWidth())) {
 					for (int y = 0; y < image.getHeight(); y++) {
 						addLineOffset(image, x, y, offsets, fallbackOffsets);
 					}
@@ -238,9 +229,6 @@ public class BaseTextureGenerationManager {
 		int width = first.length;
 		int height = first[0].length;
 
-		long diagonal45Divider = getDiagonal45Divider(width, height, massCenter);
-		long diagonal135Divider = getDiagonal135Divider(width, height, massCenter);
-
 		int matched = 0;
 		int total = 0;
 
@@ -264,7 +252,7 @@ public class BaseTextureGenerationManager {
 								y,
 								height - 1D,
 								width - 1D,
-								getDiagonal45Divider(width, height, massCenter)
+								getDiagonal45DividerDouble(width, height, massCenter)
 						);
 
 						reflectedX = reflected[0];
@@ -276,7 +264,7 @@ public class BaseTextureGenerationManager {
 								y,
 								height - 1D,
 								-(width - 1D),
-								getDiagonal135Divider(width, height, massCenter)
+								getDiagonal135DividerDouble(width, height, massCenter)
 						);
 
 						reflectedX = reflected[0];
@@ -306,9 +294,21 @@ public class BaseTextureGenerationManager {
 		return total == 0 ? 0.0F : (float) matched / total;
 	}
 
-	private static int[] getNearestAxisIndexes(double axis, int size) {
+	private static final double PIXEL_CENTER_EPSILON = 1.0E-7D;
+
+	private static boolean isPixelCenterLine(double value) {
+		return Math.abs(value - Math.rint(value)) < PIXEL_CENTER_EPSILON;
+	}
+
+	private static int[] getAxisLineIndexes(double axis, int size) {
 		if (size <= 0) {
 			return new int[0];
+		}
+
+		if (isPixelCenterLine(axis)) {
+			int index = (int) Math.round(axis);
+			index = Math.max(0, Math.min(size - 1, index));
+			return new int[] { index };
 		}
 
 		int first = (int) Math.floor(axis);
@@ -322,6 +322,24 @@ public class BaseTextureGenerationManager {
 		}
 
 		return new int[] { first, second };
+	}
+
+	private static boolean contains(int[] array, int value) {
+		for (int i : array) {
+			if (i == value) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private static boolean contains(long[] array, long value) {
+		for (long i : array) {
+			if (i == value) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private static void addLineOffset(NativeImage image, int x, int y, List<ItemOffset> offsets, List<ItemOffset> fallbackOffsets) {
@@ -342,22 +360,26 @@ public class BaseTextureGenerationManager {
 		return (long) x * (height - 1L) + (long) y * (width - 1L);
 	}
 
+	private static double getDiagonal45DividerDouble(int width, int height, ItemOffset massCenter) {
+		return (massCenter.getOffsetX() + 0.5D) * (height - 1D) +
+				(massCenter.getOffsetY() + 0.5D) * (width - 1D);
+	}
+
 	private static long getDiagonal45Divider(int width, int height, ItemOffset massCenter) {
-		return Math.round(
-				(massCenter.getOffsetX() + 0.5D) * (height - 1D) +
-						(massCenter.getOffsetY() + 0.5D) * (width - 1D)
-		);
+		return Math.round(getDiagonal45DividerDouble(width, height, massCenter));
 	}
 
 	private static long getDiagonal135Value(int x, int y, int width, int height) {
 		return (long) x * (height - 1L) - (long) y * (width - 1L);
 	}
 
+	private static double getDiagonal135DividerDouble(int width, int height, ItemOffset massCenter) {
+		return (massCenter.getOffsetX() + 0.5D) * (height - 1D) -
+				(massCenter.getOffsetY() + 0.5D) * (width - 1D);
+	}
+
 	private static long getDiagonal135Divider(int width, int height, ItemOffset massCenter) {
-		return Math.round(
-				(massCenter.getOffsetX() + 0.5D) * (height - 1D) -
-						(massCenter.getOffsetY() + 0.5D) * (width - 1D)
-		);
+		return Math.round(getDiagonal135DividerDouble(width, height, massCenter));
 	}
 
 	private static int reflectXOnDiagonal45(int x, int y, int width, int height, long divider) {
@@ -401,14 +423,7 @@ public class BaseTextureGenerationManager {
 	) {
 		int width = image.getWidth();
 		int height = image.getHeight();
-
-		long divider = splitter == ImageSplitter.DIAGONAL_45
-				? getDiagonal45Divider(width, height, massCenter)
-				: getDiagonal135Divider(width, height, massCenter);
-
-		long bestDiff = Long.MAX_VALUE;
-		List<int[]> bestPoints = new ArrayList<>();
-		boolean hasExact = false;
+		long[] lineValues = getDiagonalLineValues(width, height, massCenter, splitter);
 
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
@@ -416,31 +431,54 @@ public class BaseTextureGenerationManager {
 						? getDiagonal45Value(x, y, width, height)
 						: getDiagonal135Value(x, y, width, height);
 
-				long diff = Math.abs(value - divider);
-
-				if (diff == 0) {
-					hasExact = true;
-					addLineOffset(image, x, y, offsets, fallbackOffsets);
-					continue;
-				}
-
-				if (!hasExact) {
-					if (diff < bestDiff) {
-						bestDiff = diff;
-						bestPoints.clear();
-						bestPoints.add(new int[] { x, y });
-					} else if (diff == bestDiff) {
-						bestPoints.add(new int[] { x, y });
+				for (long lineValue : lineValues) {
+					if (value == lineValue) {
+						addLineOffset(image, x, y, offsets, fallbackOffsets);
+						break;
 					}
 				}
 			}
 		}
+	}
 
-		if (!hasExact) {
-			for (int[] point : bestPoints) {
-				addLineOffset(image, point[0], point[1], offsets, fallbackOffsets);
+	private static long[] getDiagonalLineValues(int width, int height, ItemOffset massCenter, ImageSplitter splitter) {
+		double divider = splitter == ImageSplitter.DIAGONAL_45
+				? getDiagonal45DividerDouble(width, height, massCenter)
+				: getDiagonal135DividerDouble(width, height, massCenter);
+
+		if (isPixelCenterLine(divider)) {
+			return new long[] { Math.round(divider) };
+		}
+
+		long lowerValue = Long.MIN_VALUE;
+		long upperValue = Long.MAX_VALUE;
+
+		for (int x = 0; x < width; x++) {
+			for (int y = 0; y < height; y++) {
+				long value = splitter == ImageSplitter.DIAGONAL_45
+						? getDiagonal45Value(x, y, width, height)
+						: getDiagonal135Value(x, y, width, height);
+
+				if (value < divider && value > lowerValue) {
+					lowerValue = value;
+				}
+				if (value > divider && value < upperValue) {
+					upperValue = value;
+				}
 			}
 		}
+
+		if (lowerValue == Long.MIN_VALUE && upperValue == Long.MAX_VALUE) {
+			return new long[0];
+		}
+		if (lowerValue == Long.MIN_VALUE) {
+			return new long[] { upperValue };
+		}
+		if (upperValue == Long.MAX_VALUE) {
+			return new long[] { lowerValue };
+		}
+
+		return lowerValue == upperValue ? new long[] { lowerValue } : new long[] { lowerValue, upperValue };
 	}
 
 	private static int[] reflectAcrossLine(int x, int y, double a, double b, double c) {
@@ -477,6 +515,9 @@ public class BaseTextureGenerationManager {
 				int width = image.getWidth();
 
 				double dividerX = (massCenter.getOffsetX() + 0.5D);
+				int[] lineIndexes = getAxisLineIndexes(dividerX, width);
+				int minLineX = Arrays.stream(lineIndexes).min().orElse(-1);
+				int maxLineX = Arrays.stream(lineIndexes).max().orElse(-1);
 
 				int[][] first = new int[width][height];
 				int[][] second = new int[width][height];
@@ -487,13 +528,13 @@ public class BaseTextureGenerationManager {
 							continue;
 						}
 
-						if (Double.compare(x, dividerX) == 0) {
+						if (contains(lineIndexes, x)) {
 							continue;
 						}
 
-						if (x < dividerX) {
+						if (x < minLineX) {
 							first[x][y] = 1;
-						} else {
+						} else if (x > maxLineX) {
 							second[x][y] = 1;
 						}
 					}
@@ -509,6 +550,9 @@ public class BaseTextureGenerationManager {
 				int width = image.getWidth();
 
 				double dividerY = (massCenter.getOffsetY() + 0.5D);
+				int[] lineIndexes = getAxisLineIndexes(dividerY, height);
+				int minLineY = Arrays.stream(lineIndexes).min().orElse(-1);
+				int maxLineY = Arrays.stream(lineIndexes).max().orElse(-1);
 
 				int[][] first = new int[width][height];
 				int[][] second = new int[width][height];
@@ -519,13 +563,13 @@ public class BaseTextureGenerationManager {
 							continue;
 						}
 
-						if (Double.compare(y, dividerY) == 0) {
+						if (contains(lineIndexes, y)) {
 							continue;
 						}
 
-						if (y < dividerY) {
+						if (y < minLineY) {
 							first[x][y] = 1;
-						} else {
+						} else if (y > maxLineY) {
 							second[x][y] = 1;
 						}
 					}
@@ -541,7 +585,9 @@ public class BaseTextureGenerationManager {
 				int height = image.getHeight();
 				int width = image.getWidth();
 
-				long divider = getDiagonal45Divider(width, height, massCenter);
+				long[] lineValues = getDiagonalLineValues(width, height, massCenter, this);
+				long minLineValue = Arrays.stream(lineValues).min().orElse(Long.MIN_VALUE);
+				long maxLineValue = Arrays.stream(lineValues).max().orElse(Long.MAX_VALUE);
 
 				int[][] first = new int[width][height];
 				int[][] second = new int[width][height];
@@ -554,13 +600,13 @@ public class BaseTextureGenerationManager {
 
 						long value = getDiagonal45Value(x, y, width, height);
 
-						if (value == divider) {
+						if (contains(lineValues, value)) {
 							continue;
 						}
 
-						if (value < divider) {
+						if (value < minLineValue) {
 							first[x][y] = 1;
-						} else {
+						} else if (value > maxLineValue) {
 							second[x][y] = 1;
 						}
 					}
@@ -576,7 +622,9 @@ public class BaseTextureGenerationManager {
 				int height = image.getHeight();
 				int width = image.getWidth();
 
-				long divider = getDiagonal135Divider(width, height, massCenter);
+				long[] lineValues = getDiagonalLineValues(width, height, massCenter, this);
+				long minLineValue = Arrays.stream(lineValues).min().orElse(Long.MIN_VALUE);
+				long maxLineValue = Arrays.stream(lineValues).max().orElse(Long.MAX_VALUE);
 
 				int[][] first = new int[width][height];
 				int[][] second = new int[width][height];
@@ -589,13 +637,13 @@ public class BaseTextureGenerationManager {
 
 						long value = getDiagonal135Value(x, y, width, height);
 
-						if (value == divider) {
+						if (contains(lineValues, value)) {
 							continue;
 						}
 
-						if (value < divider) {
+						if (value < minLineValue) {
 							first[x][y] = 1;
-						} else {
+						} else if (value > maxLineValue) {
 							second[x][y] = 1;
 						}
 					}

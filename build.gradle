@@ -1,10 +1,11 @@
+import net.lopymine.utils.MossyUtils
+
 plugins {
 	id "net.lopymine.mossy-plugin-core" version "$mossy_plugin_version"
 }
 
 mossyDependencies {
-	minecraft = stonecutter.current.version.toString()
-	mappings = "official"
+	minecraft = stonecutter.current.project.substring(stonecutter.current.project.indexOf("-") + 1)
 	lombok = prop("base.lombok_version")
 
 	fabricApi = prop("build.fabric_api")
@@ -14,11 +15,25 @@ mossyDependencies {
 
 	neoForge = prop("build.neoforge")
 	parchment = prop("build.parchment")
-
 }
 
 mossyResources {
 	customProperty("inventory_particles", prop("dep.inventory-particles"))
+	customProperty("mossylib_version", MossyUtils.substringBefore(prop("dep.mossylib"), "+"))
+	customProperty("inventory_particles_version", MossyUtils.substringBefore(prop("dep.inventory-particles"), "+"))
+}
+
+stonecutter {
+	replacements.string(current.parsed >= "26.1") {
+		replace("net.minecraft.client.gui.GuiGraphics", "net.minecraft.client.gui.GuiGraphicsExtractor")
+		replace("GuiGraphics", "GuiGraphicsExtractor")
+		replace("context.drawString(", "context.text(")
+		replace("context.renderItem(", "context.item(")
+		replace("graphics.drawString(", "graphics.text(")
+		replace("graphics.renderItem(", "graphics.item(")
+		replace("ClickType", "ContainerInput")
+		replace("atlas.location()", "atlas.location()")
+	}
 }
 
 repositories {
