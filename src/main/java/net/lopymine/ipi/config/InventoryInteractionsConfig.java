@@ -1,6 +1,7 @@
 package net.lopymine.ipi.config;
 
 import lombok.*;
+import net.lopymine.ipi.config.sub.*;
 import net.lopymine.mossylib.loader.MossyLoader;
 import net.lopymine.mossylib.utils.*;
 import org.slf4j.*;
@@ -20,16 +21,16 @@ import static net.lopymine.mossylib.utils.CodecUtils.option;
 public class InventoryInteractionsConfig {
 
 	public static final Codec<InventoryInteractionsConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-			option("mod_enabled", true, Codec.BOOL, InventoryInteractionsConfig::isModEnabled),
-			option("debug_mode_enabled", false, Codec.BOOL, InventoryInteractionsConfig::isDebugModeEnabled)
+			option("main", InventoryInteractionsMainConfig.getNewInstance(), InventoryInteractionsMainConfig.CODEC, InventoryInteractionsConfig::getMainConfig),
+			option("cache", InventoryInteractionsCacheConfig.getNewInstance(), InventoryInteractionsCacheConfig.CODEC, InventoryInteractionsConfig::getCacheConfig)
 	).apply(instance, InventoryInteractionsConfig::new));
 
 	private static final File CONFIG_FILE = MossyLoader.getConfigDir().resolve(InventoryInteractions.MOD_ID + ".json5").toFile();
 	private static final Logger LOGGER = LoggerFactory.getLogger(InventoryInteractions.MOD_NAME + "/Config");
 	private static InventoryInteractionsConfig INSTANCE;
 	
-	private boolean modEnabled;
-	private boolean debugModeEnabled;
+	private InventoryInteractionsMainConfig mainConfig;
+	private InventoryInteractionsCacheConfig cacheConfig;
 
 	private InventoryInteractionsConfig() {
 		throw new IllegalArgumentException();

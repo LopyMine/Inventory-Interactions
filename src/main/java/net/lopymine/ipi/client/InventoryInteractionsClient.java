@@ -1,6 +1,6 @@
 package net.lopymine.ipi.client;
 
-import net.lopymine.ipi.resourcepack.InventoryInteractionsClientReloadListener;
+import net.lopymine.ipi.resourcepack.reload.InventoryInteractionsClientReloadListener;
 import net.lopymine.mossylib.loader.MossyLoader;
 import net.lopymine.mossylib.logger.MossyLogger;
 

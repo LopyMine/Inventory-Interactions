@@ -5,11 +5,11 @@ import lombok.experimental.ExtensionMethod;
 import net.lopymine.ip.element.base.IMovableElement;
 import net.lopymine.ip.element.mod.InventoryCursor;
 import net.lopymine.ip.renderer.InventoryParticlesRenderer;
-import net.lopymine.ipi.resourcepack.base.BaseConfigsManager;
-import net.lopymine.ipi.config.base.model.CursorItemModel;
+import net.lopymine.ipi.config.model.PhysicsModel;
+import net.lopymine.ipi.resourcepack.manager.PhysicsModelsConfigsManager;
 import net.lopymine.mossylib.extension.DrawContextExtension;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.world.item.*;
 
 @Getter
@@ -18,7 +18,7 @@ public class CursorItemRenderer {
 
 	private static final CursorItemRenderer INSTANCE = new CursorItemRenderer();
 
-	private final CursorItemPart cursorItem = new CursorItemPart();
+	private final CursorItem cursorItem = new CursorItem();
 
 	private CursorItemRenderer() {
 	}
@@ -27,7 +27,7 @@ public class CursorItemRenderer {
 		return INSTANCE;
 	}
 
-	public void render(GuiGraphics context, ItemStack stack, int mouseX, int mouseY, int originalX, int originalY, Renderer drawItem) {
+	public void render(GuiGraphicsExtractor context, ItemStack stack, int mouseX, int mouseY, int originalX, int originalY, Renderer drawItem) {
 		Item item = stack.getItem();
 		if (item == Items.AIR) {
 			drawItem.run(originalX, originalY);
@@ -58,7 +58,7 @@ public class CursorItemRenderer {
 			return;
 		}
 
-		CursorItemModel config = item == Items.AIR ? BaseConfigsManager.STANDARD_MODEL : BaseConfigsManager.get(item);
+		PhysicsModel config = item == Items.AIR ? PhysicsModelsConfigsManager.STANDARD_MODEL : PhysicsModelsConfigsManager.get(item);
 		this.cursorItem.reset(item, config, pivot.getX(), pivot.getY());
 	}
 

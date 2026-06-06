@@ -24,6 +24,12 @@ mossyResources {
 }
 
 stonecutter {
+	replacements.string(current.parsed >= "1.21.11") {
+		replace("TagKey::location", "TagKey::location")
+	}
+}
+
+stonecutter {
 	replacements.string(current.parsed >= "26.1") {
 		replace("net.minecraft.client.gui.GuiGraphics", "net.minecraft.client.gui.GuiGraphicsExtractor")
 		replace("GuiGraphics", "GuiGraphicsExtractor")
@@ -33,6 +39,10 @@ stonecutter {
 		replace("graphics.renderItem(", "graphics.item(")
 		replace("ClickType", "ContainerInput")
 		replace("atlas.location()", "atlas.location()")
+	}
+
+	replacements.string(current.parsed >= "1.21.11") {
+		replace("import net.minecraft.Util;", "import net.minecraft.util.Util;")
 	}
 }
 

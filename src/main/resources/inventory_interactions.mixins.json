@@ -3,14 +3,12 @@
 	"package": "net.lopymine.ipi.mixin",
 	"refmap": "${mod_id}.refmap.json",
 	"compatibilityLevel": "JAVA_${java}",
-	"mixins": [
-		"ParticlesConfigsManagerMixin",
-		"ParticlesLinkingInfoMixin"
-	],
+	"mixins": [],
 	"client": [
 		"HandledScreenMixin",
 		"InventoryCursorMixin",
-		"InventoryParticleMixin"
+		"InventoryParticleMixin",
+		"ParticlesLinkingInfoMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

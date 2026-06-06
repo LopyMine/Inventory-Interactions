@@ -13,7 +13,7 @@ public abstract class InventoryCursorMixin {
 
 	@Inject(at = @At("TAIL"), method = "setCurrentStack", remap = false)
 	private void inject(ItemStack currentStack, CallbackInfo ci) {
-		if (!InventoryInteractionsConfig.getInstance().isModEnabled()) {
+		if (!InventoryInteractionsConfig.getInstance().getMainConfig().isModEnabled()) {
 			return;
 		}
 		CursorItemRenderer.getInstance().update(currentStack.getItem(), (InventoryCursor) (Object) (this));

@@ -10,43 +10,51 @@ import net.lopymine.ip.family.FamilyParticleData.TextureExtractMode;
 import net.lopymine.ip.family.generation.*;
 import net.lopymine.ip.t2o.*;
 import net.lopymine.ip.utils.iac.RenderedItemImage;
-import net.lopymine.ipi.InventoryInteractions;
+import net.lopymine.ipi.client.InventoryInteractionsClient;
 import net.lopymine.ipi.config.InventoryInteractionsConfig;
-import net.lopymine.ipi.config.base.*;
-import net.lopymine.ipi.resourcepack.base.BaseConfigsManager.BaseTexture;
+import net.lopymine.ipi.family.FamilyPhysicsModelConfig.GrabCorner;
+import net.lopymine.ipi.family.cache.FamilyBaseTextureCacheManager;
+import net.lopymine.ipi.resourcepack.manager.PhysicsModelsConfigsManager;
+import net.lopymine.ipi.utils.DimensionOffset;
+import net.lopymine.ipi.resourcepack.manager.PhysicsModelsConfigsManager.BaseTexture;
 import net.lopymine.mossylib.utils.ArgbUtils;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import org.jetbrains.annotations.Nullable;
-import org.jspecify.annotations.NonNull;
-import static net.lopymine.ipi.resourcepack.base.BaseConfigsManager.*;
+import static net.lopymine.ipi.resourcepack.manager.PhysicsModelsConfigsManager.*;
 
 @ExtensionMethod(NativeImageExtension.class)
 public class BaseTextureGenerationManager {
 
-	public static final Map<Item, List<ItemOffset>> ITEM_SEPARATORS = new HashMap<>();
+	public static final Map<Item, List<DimensionOffset>> ITEM_SEPARATORS = new HashMap<>();
 
 	@Nullable
-	public static BaseTexture generateBaseTexture(Identifier itemId, Item item) {
+	public static BaseTexture generateBaseTexture(Identifier itemId, Item item, GrabCorner grabCorner) {
+		BaseTexture load = FamilyBaseTextureCacheManager.load(itemId);
+		if (load != null) {
+			return load;
+		}
+
 		RenderedItemImage renderedItemImage = ItemRenderingManager.getRenderedItemImage(item, itemId, TextureExtractMode.ITEM);
 		if (renderedItemImage == null) {
 			return null;
 		}
 
 		NativeImage image = renderedItemImage.getImage();
-
-		ItemOffset massCenter = Optional.of(Texture2ObjectsManager.readFromTexture(image, itemId,
-				"mass center position",
+		DimensionOffset massCenter = Optional.of(Texture2ObjectsManager.readFromTexture(image, itemId,
+				"mass center",
 				Texture2ObjectPixelFilter.NOT_TRANSPARENT,
-				PIXEL_POSITION
-		)).filter((list) -> !list.isEmpty()).map((list) -> findCenter(list, STANDARD_MIDDLE_BOTTOM_MASS_POS)).orElse(STANDARD_MIDDLE_BOTTOM_MASS_POS);
-		ItemOffset partConnectionCenter = getPartConnectionCenter(itemId, item, image, massCenter);
+				DIMENSION_OFFSET_GENERATOR
+		)).filter((list) -> !list.isEmpty()).map((list) -> findCenter(list, MIDDLE_BOTTOM_POS)).orElse(MIDDLE_BOTTOM_POS);
+		DimensionOffset grabPos = getGrabPos(itemId, item, image, massCenter, grabCorner);
 
-		return new BaseTexture(partConnectionCenter, STANDARD_MIDDLE_PART_CONNECTION_POS, massCenter);
+		BaseTexture baseTexture = new BaseTexture(PhysicsModelsConfigsManager.checkAndOffsetMassCenterDistance(massCenter, grabPos), grabPos, image);
+		FamilyBaseTextureCacheManager.add(itemId, baseTexture);
 
+		return baseTexture;
 	}
 
-	private static @NonNull ItemOffset getPartConnectionCenter(Identifier itemId, Item item, NativeImage image, ItemOffset massCenter) {
+	public static @NonNull DimensionOffset getGrabPos(Identifier itemId, Item item, NativeImage image, DimensionOffset massCenter, GrabCorner grabCorner) {
 		List<SplitResult> list = new ArrayList<>();
 
 		for (ImageSplitter value : ImageSplitter.values()) {
@@ -71,35 +79,35 @@ public class BaseTextureGenerationManager {
 				))
 				.collect(Collectors.joining(", "));
 
+		if (InventoryInteractionsConfig.getInstance().getMainConfig().isDebugModeEnabled()) {
+			for (ImageSplitter value : ImageSplitter.values()) {
+				if (value == result.splitter) {
+					continue;
+				}
+				getFarthestGrabPosOnSplitDiagonal(image, item, massCenter, value, grabCorner);
+			}
+		}
+
+		DimensionOffset farthestGrabPosOnSplitDiagonal = getFarthestGrabPosOnSplitDiagonal(image, item, massCenter, result.splitter, grabCorner);
+
 		if (result.symmetry < 0.5) {
-			InventoryInteractions.LOGGER.info(
+			InventoryInteractionsClient.LOGGER.debug(
 					"[1] {}: symmetry {}, splitter {}, other {}",
 					itemId.toString(),
 					String.format(Locale.US, "%.2f", result.symmetry),
 					result.splitter.name(),
 					allResults
 			);
-			return getFarthestGrabPos(image, massCenter);
+			return getFarthestGrabPos(image, massCenter, grabCorner);
 		}
-
-		if (InventoryInteractionsConfig.getInstance().isDebugModeEnabled()) {
-			for (ImageSplitter value : ImageSplitter.values()) {
-				if (value == result.splitter) {
-					continue;
-				}
-				getFarthestGrabPosOnSplitDiagonal(image, item, massCenter, value);
-			}
-		}
-
-		ItemOffset farthestGrabPosOnSplitDiagonal = getFarthestGrabPosOnSplitDiagonal(image, item, massCenter, result.splitter);
 
 		double distance = Math.hypot(
 				farthestGrabPosOnSplitDiagonal.getOffsetX() - massCenter.getOffsetX(),
 				farthestGrabPosOnSplitDiagonal.getOffsetY() - massCenter.getOffsetY()
 		);
 
-		if (distance <= 2.0D) {
-			InventoryInteractions.LOGGER.info(
+		if (distance <= 2.5D) {
+			InventoryInteractionsClient.LOGGER.debug(
 					"[22] {}: symmetry {}, splitter {}, distance {}, other {}",
 					itemId.toString(),
 					String.format(Locale.US, "%.2f", result.symmetry),
@@ -107,10 +115,10 @@ public class BaseTextureGenerationManager {
 					String.format(Locale.US, "%.2f", distance),
 					allResults
 			);
-			return getFarthestGrabPos(image, massCenter);
+			return getFarthestGrabPos(image, massCenter, grabCorner);
 		}
 
-		InventoryInteractions.LOGGER.info(
+		InventoryInteractionsClient.LOGGER.debug(
 				"[333] {}: symmetry {}, splitter {}, distance {},, other {}",
 				itemId.toString(),
 				String.format(Locale.US, "%.2f", result.symmetry),
@@ -122,20 +130,26 @@ public class BaseTextureGenerationManager {
 		return farthestGrabPosOnSplitDiagonal;
 	}
 
-	private static ItemOffset getFarthestGrabPosOnSplitDiagonal(NativeImage image, Item item, ItemOffset massCenter, ImageSplitter splitter) {
-		List<ItemOffset> fallbackOffsets = new ArrayList<>();
-		List<ItemOffset> offsets = new ArrayList<>();
+	public static DimensionOffset getFarthestGrabPosOnSplitDiagonal(
+			NativeImage image,
+			Item item,
+			DimensionOffset massCenter,
+			ImageSplitter splitter,
+			GrabCorner grabCorner
+	) {
+		List<DimensionOffset> fallbackOffsets = new ArrayList<>();
+		List<DimensionOffset> offsets = new ArrayList<>();
 
 		switch (splitter) {
 			case HORIZONTAL -> {
-				for (int y : getAxisLineIndexes((massCenter.getOffsetY() + 0.5D), image.getHeight())) {
+				for (int y : getAxisLineIndexes(massCenter.getOffsetY(), image.getHeight())) {
 					for (int x = 0; x < image.getWidth(); x++) {
 						addLineOffset(image, x, y, offsets, fallbackOffsets);
 					}
 				}
 			}
 			case VERTICAL -> {
-				for (int x : getAxisLineIndexes((massCenter.getOffsetX() + 0.5D), image.getWidth())) {
+				for (int x : getAxisLineIndexes(massCenter.getOffsetX(), image.getWidth())) {
 					for (int y = 0; y < image.getHeight(); y++) {
 						addLineOffset(image, x, y, offsets, fallbackOffsets);
 					}
@@ -146,21 +160,22 @@ public class BaseTextureGenerationManager {
 			}
 		}
 
-		List<ItemOffset> resultOffsets = offsets.isEmpty() ? fallbackOffsets : offsets;
+		List<DimensionOffset> resultOffsets = offsets.isEmpty() ? fallbackOffsets : offsets;
 
 		ITEM_SEPARATORS.computeIfAbsent(item, (k) -> new ArrayList<>()).addAll(resultOffsets);
 
-		return getFarthestItemOffset(massCenter, resultOffsets);
+		return getFarthestItemOffset(massCenter, resultOffsets, grabCorner);
 	}
 
-	private static ItemOffset getFarthestGrabPos(NativeImage image, ItemOffset massCenter) {
-		List<ItemOffset> offsets = new ArrayList<>();
+	public static DimensionOffset getFarthestGrabPos(NativeImage image, DimensionOffset massCenter, GrabCorner grabCorner) {
+		List<DimensionOffset> offsets = new ArrayList<>();
+
 		for (int x = 0; x < image.getWidth(); x++) {
 			for (int y = 0; y < image.getHeight(); y++) {
 				if (withoutPixelsAround(image, x, y) >= 1) {
 					continue;
 				}
-				offsets.add(new ItemOffset(x, y, image.getWidth(), image.getHeight()));
+				offsets.add(new DimensionOffset(x, y, image.getWidth(), image.getHeight()));
 			}
 		}
 
@@ -170,30 +185,79 @@ public class BaseTextureGenerationManager {
 					if (transparentPixel(image, x, y)) {
 						continue;
 					}
-					offsets.add(new ItemOffset(x, y, image.getWidth(), image.getHeight()));
+					offsets.add(new DimensionOffset(x, y, image.getWidth(), image.getHeight()));
 				}
 			}
 		}
 
-		return getFarthestItemOffset(massCenter, offsets);
+		return getFarthestItemOffset(massCenter, offsets, grabCorner);
 	}
 
-	private static ItemOffset getFarthestItemOffset(ItemOffset massCenter, List<ItemOffset> offsets) {
+	public static DimensionOffset getFarthestItemOffset(
+			DimensionOffset massCenter,
+			List<DimensionOffset> offsets,
+			GrabCorner grabCorner
+	) {
 		if (offsets.isEmpty()) {
-			return STANDARD_MIDDLE_PART_CONNECTION_POS;
+			return MIDDLE_POS;
 		}
 
-		offsets.sort((one, two) -> {
-			double distance = Math.hypot(one.getOffsetX() - (massCenter.getOffsetX() + 0.5D), one.getOffsetY() - (massCenter.getOffsetY() + 0.5D));
-			double distance2 = Math.hypot(two.getOffsetX() - (massCenter.getOffsetX() + 0.5D), two.getOffsetY() - (massCenter.getOffsetY() + 0.5D));
+		List<DimensionOffset> filteredOffsets = filterOffsetsByGrabCorner(offsets, massCenter, grabCorner);
+
+		List<DimensionOffset> resultOffsets = filteredOffsets.isEmpty() ? offsets : filteredOffsets;
+
+		resultOffsets.sort((one, two) -> {
+			double distance = Math.hypot(
+					one.getOffsetX() - massCenter.getOffsetX(),
+					one.getOffsetY() - massCenter.getOffsetY()
+			);
+			double distance2 = Math.hypot(
+					two.getOffsetX() - massCenter.getOffsetX(),
+					two.getOffsetY() - massCenter.getOffsetY()
+			);
 			return Double.compare(distance2, distance);
 		});
 
-		return offsets.get(0);
+		return resultOffsets.get(0);
+	}
+
+	public static List<DimensionOffset> filterOffsetsByGrabCorner(
+			List<DimensionOffset> offsets,
+			DimensionOffset massCenter,
+			GrabCorner grabCorner
+	) {
+		if (grabCorner == GrabCorner.ANY) {
+			return offsets;
+		}
+
+		return offsets.stream()
+				.filter((offset) -> isInGrabCorner(offset, massCenter, grabCorner))
+				.collect(Collectors.toList());
+	}
+
+	public static boolean isInGrabCorner(DimensionOffset offset, DimensionOffset massCenter, GrabCorner grabCorner) {
+		double x = offset.getOffsetX();
+		double y = offset.getOffsetY();
+
+		double centerX = massCenter.getOffsetX();
+		double centerY = massCenter.getOffsetY();
+
+		return switch (grabCorner) {
+			case ANY -> true;
+			case BOTTOM -> y > centerY;
+			case TOP -> y < centerY;
+			case LEFT -> x < centerX;
+			case RIGHT -> x > centerX;
+
+			case BOTTOM_LEFT -> x < centerX && y > centerY;
+			case BOTTOM_RIGHT -> x > centerX && y > centerY;
+			case TOP_LEFT -> x < centerX && y < centerY;
+			case TOP_RIGHT -> x > centerX && y < centerY;
+		};
 	}
 
 	// 2 = skip, 0 = false, 1 = true
-	private static int withoutPixelsAround(NativeImage image, int x, int y) {
+	public static int withoutPixelsAround(NativeImage image, int x, int y) {
 		if (x == 1 || x == image.getWidth() - 1 || y == 1 || y == image.getHeight() - 1) {
 			return 2;
 		}
@@ -218,11 +282,11 @@ public class BaseTextureGenerationManager {
 		return 0;
 	}
 
-	private static boolean transparentPixel(NativeImage image, int x, int y) {
+	public static boolean transparentPixel(NativeImage image, int x, int y) {
 		return ArgbUtils.getAlpha(image.getPixelArgb(x, y)) < 10;
 	}
 
-	private static float getSymmetry(DividedImage image, ImageSplitter splitter, ItemOffset massCenter) {
+	public static float getSymmetry(DividedImage image, ImageSplitter splitter, DimensionOffset massCenter) {
 		int[][] first = image.first();
 		int[][] second = image.second();
 
@@ -241,10 +305,10 @@ public class BaseTextureGenerationManager {
 
 				switch (splitter) {
 					case HORIZONTAL -> {
-						reflectedY = (int) Math.round(2D * (massCenter.getOffsetY() + 0.5D) - y);
+						reflectedY = (int) Math.round(2D * massCenter.getOffsetY() - y);
 					}
 					case VERTICAL -> {
-						reflectedX = (int) Math.round(2D * (massCenter.getOffsetX() + 0.5D) - x);
+						reflectedX = (int) Math.round(2D * massCenter.getOffsetX() - x);
 					}
 					case DIAGONAL_45 -> {
 						int[] reflected = reflectAcrossLine(
@@ -294,13 +358,13 @@ public class BaseTextureGenerationManager {
 		return total == 0 ? 0.0F : (float) matched / total;
 	}
 
-	private static final double PIXEL_CENTER_EPSILON = 1.0E-7D;
+	public static final double PIXEL_CENTER_EPSILON = 1.0E-7D;
 
-	private static boolean isPixelCenterLine(double value) {
+	public static boolean isPixelCenterLine(double value) {
 		return Math.abs(value - Math.rint(value)) < PIXEL_CENTER_EPSILON;
 	}
 
-	private static int[] getAxisLineIndexes(double axis, int size) {
+	public static int[] getAxisLineIndexes(double axis, int size) {
 		if (size <= 0) {
 			return new int[0];
 		}
@@ -324,26 +388,8 @@ public class BaseTextureGenerationManager {
 		return new int[] { first, second };
 	}
 
-	private static boolean contains(int[] array, int value) {
-		for (int i : array) {
-			if (i == value) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	private static boolean contains(long[] array, long value) {
-		for (long i : array) {
-			if (i == value) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	private static void addLineOffset(NativeImage image, int x, int y, List<ItemOffset> offsets, List<ItemOffset> fallbackOffsets) {
-		ItemOffset offset = new ItemOffset(x, y, image.getWidth(), image.getHeight());
+	public static void addLineOffset(NativeImage image, int x, int y, List<DimensionOffset> offsets, List<DimensionOffset> fallbackOffsets) {
+		DimensionOffset offset = new DimensionOffset(x, y, image.getWidth(), image.getHeight());
 
 		int i = withoutPixelsAround(image, x, y);
 		if (i >= 1) {
@@ -356,70 +402,30 @@ public class BaseTextureGenerationManager {
 		offsets.add(offset);
 	}
 
-	private static long getDiagonal45Value(int x, int y, int width, int height) {
+	public static long getDiagonal45Value(int x, int y, int width, int height) {
 		return (long) x * (height - 1L) + (long) y * (width - 1L);
 	}
 
-	private static double getDiagonal45DividerDouble(int width, int height, ItemOffset massCenter) {
-		return (massCenter.getOffsetX() + 0.5D) * (height - 1D) +
-				(massCenter.getOffsetY() + 0.5D) * (width - 1D);
+	public static double getDiagonal45DividerDouble(int width, int height, DimensionOffset massCenter) {
+		return massCenter.getOffsetX() * (height - 1D) +
+				massCenter.getOffsetY() * (width - 1D);
 	}
 
-	private static long getDiagonal45Divider(int width, int height, ItemOffset massCenter) {
-		return Math.round(getDiagonal45DividerDouble(width, height, massCenter));
-	}
-
-	private static long getDiagonal135Value(int x, int y, int width, int height) {
+	public static long getDiagonal135Value(int x, int y, int width, int height) {
 		return (long) x * (height - 1L) - (long) y * (width - 1L);
 	}
 
-	private static double getDiagonal135DividerDouble(int width, int height, ItemOffset massCenter) {
-		return (massCenter.getOffsetX() + 0.5D) * (height - 1D) -
-				(massCenter.getOffsetY() + 0.5D) * (width - 1D);
+	public static double getDiagonal135DividerDouble(int width, int height, DimensionOffset massCenter) {
+		return massCenter.getOffsetX() * (height - 1D) -
+				massCenter.getOffsetY() * (width - 1D);
 	}
 
-	private static long getDiagonal135Divider(int width, int height, ItemOffset massCenter) {
-		return Math.round(getDiagonal135DividerDouble(width, height, massCenter));
-	}
-
-	private static int reflectXOnDiagonal45(int x, int y, int width, int height, long divider) {
-		if (height <= 1) {
-			return x;
-		}
-
-		return (int) Math.round((divider - y * (width - 1D)) / (height - 1D));
-	}
-
-	private static int reflectYOnDiagonal45(int x, int y, int width, int height, long divider) {
-		if (width <= 1) {
-			return y;
-		}
-
-		return (int) Math.round((divider - x * (height - 1D)) / (width - 1D));
-	}
-
-	private static int reflectXOnDiagonal135(int x, int y, int width, int height, long divider) {
-		if (height <= 1) {
-			return x;
-		}
-
-		return (int) Math.round((divider + y * (width - 1D)) / (height - 1D));
-	}
-
-	private static int reflectYOnDiagonal135(int x, int y, int width, int height, long divider) {
-		if (width <= 1) {
-			return y;
-		}
-
-		return (int) Math.round((x * (height - 1D) - divider) / (width - 1D));
-	}
-
-	private static void collectDiagonalOffsets(
+	public static void collectDiagonalOffsets(
 			NativeImage image,
-			ItemOffset massCenter,
+			DimensionOffset massCenter,
 			ImageSplitter splitter,
-			List<ItemOffset> offsets,
-			List<ItemOffset> fallbackOffsets
+			List<DimensionOffset> offsets,
+			List<DimensionOffset> fallbackOffsets
 	) {
 		int width = image.getWidth();
 		int height = image.getHeight();
@@ -441,7 +447,7 @@ public class BaseTextureGenerationManager {
 		}
 	}
 
-	private static long[] getDiagonalLineValues(int width, int height, ItemOffset massCenter, ImageSplitter splitter) {
+	public static long[] getDiagonalLineValues(int width, int height, DimensionOffset massCenter, ImageSplitter splitter) {
 		double divider = splitter == ImageSplitter.DIAGONAL_45
 				? getDiagonal45DividerDouble(width, height, massCenter)
 				: getDiagonal135DividerDouble(width, height, massCenter);
@@ -481,7 +487,7 @@ public class BaseTextureGenerationManager {
 		return lowerValue == upperValue ? new long[] { lowerValue } : new long[] { lowerValue, upperValue };
 	}
 
-	private static int[] reflectAcrossLine(int x, int y, double a, double b, double c) {
+	public static int[] reflectAcrossLine(int x, int y, double a, double b, double c) {
 		double divisor = a * a + b * b;
 
 		if (divisor == 0D) {
@@ -499,163 +505,11 @@ public class BaseTextureGenerationManager {
 	@Getter
 	@Setter
 	@AllArgsConstructor
-	private static class SplitResult {
+	public static class SplitResult {
 
-		float symmetry;
-		ImageSplitter splitter;
+		private float symmetry;
+		private ImageSplitter splitter;
 
 	}
-
-	public enum ImageSplitter {
-
-		VERTICAL {
-			@Override
-			public DividedImage splitImage(NativeImage image, ItemOffset massCenter) {
-				int height = image.getHeight();
-				int width = image.getWidth();
-
-				double dividerX = (massCenter.getOffsetX() + 0.5D);
-				int[] lineIndexes = getAxisLineIndexes(dividerX, width);
-				int minLineX = Arrays.stream(lineIndexes).min().orElse(-1);
-				int maxLineX = Arrays.stream(lineIndexes).max().orElse(-1);
-
-				int[][] first = new int[width][height];
-				int[][] second = new int[width][height];
-
-				for (int x = 0; x < width; x++) {
-					for (int y = 0; y < height; y++) {
-						if (ArgbUtils.getAlpha(image.getPixelArgb(x, y)) == 0) {
-							continue;
-						}
-
-						if (contains(lineIndexes, x)) {
-							continue;
-						}
-
-						if (x < minLineX) {
-							first[x][y] = 1;
-						} else if (x > maxLineX) {
-							second[x][y] = 1;
-						}
-					}
-				}
-
-				return new DividedImage(first, second);
-			}
-		},
-		HORIZONTAL {
-			@Override
-			public DividedImage splitImage(NativeImage image, ItemOffset massCenter) {
-				int height = image.getHeight();
-				int width = image.getWidth();
-
-				double dividerY = (massCenter.getOffsetY() + 0.5D);
-				int[] lineIndexes = getAxisLineIndexes(dividerY, height);
-				int minLineY = Arrays.stream(lineIndexes).min().orElse(-1);
-				int maxLineY = Arrays.stream(lineIndexes).max().orElse(-1);
-
-				int[][] first = new int[width][height];
-				int[][] second = new int[width][height];
-
-				for (int x = 0; x < width; x++) {
-					for (int y = 0; y < height; y++) {
-						if (ArgbUtils.getAlpha(image.getPixelArgb(x, y)) == 0) {
-							continue;
-						}
-
-						if (contains(lineIndexes, y)) {
-							continue;
-						}
-
-						if (y < minLineY) {
-							first[x][y] = 1;
-						} else if (y > maxLineY) {
-							second[x][y] = 1;
-						}
-					}
-				}
-
-				return new DividedImage(first, second);
-			}
-		},
-
-		DIAGONAL_45 {
-			@Override
-			public DividedImage splitImage(NativeImage image, ItemOffset massCenter) {
-				int height = image.getHeight();
-				int width = image.getWidth();
-
-				long[] lineValues = getDiagonalLineValues(width, height, massCenter, this);
-				long minLineValue = Arrays.stream(lineValues).min().orElse(Long.MIN_VALUE);
-				long maxLineValue = Arrays.stream(lineValues).max().orElse(Long.MAX_VALUE);
-
-				int[][] first = new int[width][height];
-				int[][] second = new int[width][height];
-
-				for (int x = 0; x < width; x++) {
-					for (int y = 0; y < height; y++) {
-						if (ArgbUtils.getAlpha(image.getPixelArgb(x, y)) == 0) {
-							continue;
-						}
-
-						long value = getDiagonal45Value(x, y, width, height);
-
-						if (contains(lineValues, value)) {
-							continue;
-						}
-
-						if (value < minLineValue) {
-							first[x][y] = 1;
-						} else if (value > maxLineValue) {
-							second[x][y] = 1;
-						}
-					}
-				}
-
-				return new DividedImage(first, second);
-			}
-		},
-
-		DIAGONAL_135 {
-			@Override
-			public DividedImage splitImage(NativeImage image, ItemOffset massCenter) {
-				int height = image.getHeight();
-				int width = image.getWidth();
-
-				long[] lineValues = getDiagonalLineValues(width, height, massCenter, this);
-				long minLineValue = Arrays.stream(lineValues).min().orElse(Long.MIN_VALUE);
-				long maxLineValue = Arrays.stream(lineValues).max().orElse(Long.MAX_VALUE);
-
-				int[][] first = new int[width][height];
-				int[][] second = new int[width][height];
-
-				for (int x = 0; x < width; x++) {
-					for (int y = 0; y < height; y++) {
-						if (ArgbUtils.getAlpha(image.getPixelArgb(x, y)) == 0) {
-							continue;
-						}
-
-						long value = getDiagonal135Value(x, y, width, height);
-
-						if (contains(lineValues, value)) {
-							continue;
-						}
-
-						if (value < minLineValue) {
-							first[x][y] = 1;
-						} else if (value > maxLineValue) {
-							second[x][y] = 1;
-						}
-					}
-				}
-
-				return new DividedImage(first, second);
-			}
-		};
-
-		public abstract DividedImage splitImage(NativeImage image, ItemOffset massCenter);
-	}
-
-	public record DividedImage(int[][] first, int[][] second) {}
 
 }

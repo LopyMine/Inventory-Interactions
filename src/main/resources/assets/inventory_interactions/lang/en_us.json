@@ -11,6 +11,7 @@
 	"${mod_id}.modmenu.option.mod_enabled.description": "If enabled, you will see item interactions in your inventory; if disabled, won't.",
 
 	"${mod_id}.modmenu.option.debug_mode_enabled.name": "Debug Mode Enabled",
-	"${mod_id}.modmenu.option.debug_mode_enabled.description": "If enabled, you will see some debug info; if disabled, won't."
+	"${mod_id}.modmenu.option.debug_mode_enabled.description": "If enabled, you will see some debug info; if disabled, won't.",
 
+	"${mod_id}.models_linking.title": "Linking Physics Models To Items"
 }
