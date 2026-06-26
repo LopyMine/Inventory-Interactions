@@ -21,7 +21,8 @@
 		"minecraft:music_disc_5",
 		"minecraft:music_disc_pigstep",
 		"minecraft:music_disc_tears",
-		"minecraft:music_disc_lava_chicken"
+		"minecraft:music_disc_lava_chicken",
+		"minecraft:music_disc_bounce"
 	],
 	"physics": {
 		"gravity": 1.0,

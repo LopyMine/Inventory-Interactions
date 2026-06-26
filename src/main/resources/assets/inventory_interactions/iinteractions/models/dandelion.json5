@@ -1,7 +1,8 @@
 {
 	"base_texture": "dandelion.png",
 	"items": [
-		"minecraft:dandelion"
+		"minecraft:dandelion",
+		"minecraft:golden_dandelion"
 	],
 	"physics": {
 		"gravity": 0.5,

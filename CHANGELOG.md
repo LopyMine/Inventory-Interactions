@@ -1,4 +1,2 @@
-- Reworked most of the textures, now items have little different physics.
-- Added support for modded items!!! Works in the same way, as Inventory Particles. 
-- Fixed particles interpolation on spawning.
-- Ported to newer versions (26.x).
+- Ported to 26.2
+- Updated to latest Inventory Particles & MossyLib

@@ -1,0 +1,20 @@
+{
+	"keywords": {
+		"whitelist": [
+			"boat"
+		]
+	},
+	"tags": [
+		"c:boats",
+		"minecraft:boats"
+	],
+	"base_texture": "boat.png",
+	"physics": {
+		"gravity": 1.0,
+		"braking": 0.990,
+		"cursor_impulse_inherit_coefficient": 1.0
+	},
+	"family_groups": [],
+	"compatible": false,
+	"priority": 1000
+}

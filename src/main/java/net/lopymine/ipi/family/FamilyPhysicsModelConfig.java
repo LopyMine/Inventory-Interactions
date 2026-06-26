@@ -4,6 +4,8 @@ import com.mojang.serialization.Codec;
 import java.util.*;
 import lombok.*;
 import net.lopymine.ip.family.FamilyParticleConfig.WhitelistAndBlacklist;
+import net.lopymine.ipi.InventoryInteractions;
+import net.lopymine.ipi.config.model.PhysicsModelConfig;
 import net.lopymine.ipi.config.physics.PhysicsConfig;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.StringRepresentable;
@@ -22,6 +24,7 @@ public class FamilyPhysicsModelConfig {
 			option("keywords", new WhitelistAndBlacklist(), LIST_CODEC, FamilyPhysicsModelConfig::getKeywords),
 			option("tags", new WhitelistAndBlacklist(), LIST_CODEC, FamilyPhysicsModelConfig::getTags),
 			option("namespaces", new WhitelistAndBlacklist(), LIST_CODEC, FamilyPhysicsModelConfig::getNamespaces),
+			option("base_texture", PhysicsModelConfig.DEFAULT_BASE_TEXTURE, Identifier.CODEC, FamilyPhysicsModelConfig::getBaseTexture),
 			option("grab_corner", GrabCorner.ANY, GrabCorner.CODEC, FamilyPhysicsModelConfig::getGrabCorner),
 			option("physics", PhysicsConfig.getNewInstance(), PhysicsConfig.CODEC, FamilyPhysicsModelConfig::getPhysics),
 			option("family_groups", new ArrayList<>(), Codec.STRING, FamilyPhysicsModelConfig::getFamilyGroups),
@@ -35,6 +38,7 @@ public class FamilyPhysicsModelConfig {
 	private WhitelistAndBlacklist keywords;
 	private WhitelistAndBlacklist tags;
 	private WhitelistAndBlacklist namespaces;
+	private Identifier baseTexture;
 	private GrabCorner grabCorner;
 	private PhysicsConfig physics;
 	private ArrayList<String> familyGroups;
@@ -46,6 +50,7 @@ public class FamilyPhysicsModelConfig {
 			WhitelistAndBlacklist keywords,
 			WhitelistAndBlacklist tags,
 			WhitelistAndBlacklist namespaces,
+			Identifier baseTexture,
 			GrabCorner grabCorner,
 			PhysicsConfig physicsConfig,
 			ArrayList<String> familyGroups,
@@ -56,11 +61,16 @@ public class FamilyPhysicsModelConfig {
 		this.keywords         = keywords;
 		this.tags             = tags;
 		this.namespaces       = namespaces;
+		this.baseTexture       = baseTexture;
 		this.grabCorner       = grabCorner;
 		this.physics          = physicsConfig;
 		this.familyGroups     = familyGroups;
 		this.compatibleGroups = compatibleGroups;
 		this.priority         = priority;
+	}
+
+	public Identifier getBaseTextureInFolder() {
+		return InventoryInteractions.id("textures/iinteractions/models/%s".formatted(this.baseTexture.getPath()));
 	}
 
 	public enum GrabCorner implements StringRepresentable {

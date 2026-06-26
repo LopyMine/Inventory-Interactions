@@ -656,7 +656,43 @@
 		"minecraft:infested_chiseled_stone_bricks",
 		"minecraft:infested_deepslate",
 		
-		"minecraft:bedrock"
+		"minecraft:bedrock",
+
+		"minecraft:cinnabar",
+		"minecraft:cinnabar_stairs",
+		"minecraft:cinnabar_slab",
+		"minecraft:cinnabar_wall",
+
+		"minecraft:chiseled_cinnabar",
+
+		"minecraft:polished_cinnabar",
+		"minecraft:polished_cinnabar_slab",
+		"minecraft:polished_cinnabar_stairs",
+		"minecraft:polished_cinnabar_wall",
+
+		"minecraft:cinnabar_bricks",
+		"minecraft:cinnabar_brick_slab",
+		"minecraft:cinnabar_brick_stairs",
+		"minecraft:cinnabar_brick_wall",
+
+		"minecraft:sulfur",
+		"minecraft:sulfur_stairs",
+		"minecraft:sulfur_slab",
+		"minecraft:sulfur_wall",
+
+		"minecraft:chiseled_sulfur",
+
+		"minecraft:polished_sulfur",
+		"minecraft:polished_sulfur_slab",
+		"minecraft:polished_sulfur_stairs",
+		"minecraft:polished_sulfur_wall",
+
+		"minecraft:sulfur_bricks",
+		"minecraft:sulfur_brick_slab",
+		"minecraft:sulfur_brick_stairs",
+		"minecraft:sulfur_brick_wall",
+
+		"minecraft:potent_sulfur"
 	],
 	"physics": {
 		"gravity": 1.0,

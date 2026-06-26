@@ -12,6 +12,7 @@ import lombok.*;
 import net.lopymine.ip.config.misc.CachedItem;
 import net.lopymine.ip.resourcepack.manager.AbstractConfigsManager;
 import net.lopymine.ip.t2o.*;
+import net.lopymine.ipi.InventoryInteractions;
 import net.lopymine.ipi.client.InventoryInteractionsClient;
 import net.lopymine.ipi.config.model.*;
 import net.lopymine.ipi.config.physics.*;
@@ -19,6 +20,7 @@ import net.lopymine.ipi.family.*;
 import net.lopymine.ipi.family.cache.FamilyBaseTextureCacheManager;
 import net.lopymine.ipi.utils.DimensionOffset;
 import net.lopymine.ipi.family.generation.BaseTextureGenerationManager;
+import net.lopymine.mossylib.loader.MossyLoader;
 import net.lopymine.mossylib.logger.MossyLogger;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -82,6 +84,18 @@ public class PhysicsModelsConfigsManager extends AbstractConfigsManager<PhysicsM
 			if (VERSION.get() != reloadData.getVersion()) {
 				return null;
 			}
+
+			if (MossyLoader.isDevelopmentEnvironment()) {
+				Set<Entry<ResourceKey<Item>, Item>> set = new HashSet<>(BuiltInRegistries.ITEM.entrySet());
+				for (Entry<ResourceKey<Item>, Item> entry : set) {
+					Identifier identifier = entry.getKey().identifier();
+					Item item = entry.getValue();
+					if (combinedMap.get(item) == null) {
+						InventoryInteractionsClient.LOGGER.error("No physics model for vanilla item: {}", identifier.toString());
+					}
+				}
+			}
+
 			COMBINED_MAP = combinedMap;
 			return new Pair<>(combinedMap, reloadData);
 		}).thenCompose((pair) -> {
@@ -175,6 +189,11 @@ public class PhysicsModelsConfigsManager extends AbstractConfigsManager<PhysicsM
 		List<FamilyPhysicsModelConfig> list = FamilyPhysicsModelsManager.get(item);
 
 		for (FamilyPhysicsModelConfig config : list) {
+			if (config.getBaseTexture() != PhysicsModelConfig.DEFAULT_BASE_TEXTURE) {
+				BaseTexture parsed = parseBaseTexture(config.getBaseTextureInFolder());
+				return new PhysicsModel(parsed.massCenter(), parsed.grabPos(), config.getPhysics());
+			}
+
 			BaseTexture baseTexture = BaseTextureGenerationManager.generateBaseTexture(itemId, item, config.getGrabCorner());
 			if (baseTexture == null) {
 				continue;
