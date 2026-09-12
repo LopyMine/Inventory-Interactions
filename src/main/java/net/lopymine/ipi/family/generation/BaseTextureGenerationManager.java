@@ -13,7 +13,7 @@ import net.lopymine.ip.utils.iac.RenderedItemImage;
 import net.lopymine.ipi.client.InventoryInteractionsClient;
 import net.lopymine.ipi.config.InventoryInteractionsConfig;
 import net.lopymine.ipi.family.FamilyPhysicsModelConfig.GrabCorner;
-import net.lopymine.ipi.family.cache.FamilyBaseTextureCacheManager;
+import net.lopymine.ipi.family.cache.*;
 import net.lopymine.ipi.resourcepack.manager.PhysicsModelsConfigsManager;
 import net.lopymine.ipi.utils.DimensionOffset;
 import net.lopymine.ipi.resourcepack.manager.PhysicsModelsConfigsManager.BaseTexture;
@@ -29,13 +29,15 @@ public class BaseTextureGenerationManager {
 	public static final Map<Item, List<DimensionOffset>> ITEM_SEPARATORS = new HashMap<>();
 
 	@Nullable
-	public static BaseTexture generateBaseTexture(Identifier itemId, Item item, GrabCorner grabCorner) {
+	public static BaseTexture generateBaseTexture(Identifier itemId, Item item, GrabCorner grabCorner, FamilyLinkCache cache) {
 		BaseTexture load = FamilyBaseTextureCacheManager.load(itemId);
 		if (load != null) {
 			return load;
 		}
 
-		RenderedItemImage renderedItemImage = ItemRenderingManager.getRenderedItemImage(item, itemId, TextureExtractMode.ITEM);
+		RenderedItemImage renderedItemImage = Optional.ofNullable(cache.getImages().get(item, TextureExtractMode.ITEM)).orElseGet(
+				() -> ItemRenderingManager.renderItemImage(item, itemId, TextureExtractMode.ITEM, FAMILY_CELL_SIZE)
+		);
 		if (renderedItemImage == null) {
 			return null;
 		}

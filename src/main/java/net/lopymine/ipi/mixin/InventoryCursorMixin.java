@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class InventoryCursorMixin {
 
 	@Inject(at = @At("TAIL"), method = "setCurrentStack", remap = false)
-	private void inject(ItemStack currentStack, CallbackInfo ci) {
+	private void updateCursorItemToo(ItemStack currentStack, CallbackInfo ci) {
 		if (!InventoryInteractionsConfig.getInstance().getMainConfig().isModEnabled()) {
 			return;
 		}

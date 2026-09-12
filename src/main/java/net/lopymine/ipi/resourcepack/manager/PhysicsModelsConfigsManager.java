@@ -7,17 +7,20 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
+import java.util.stream.*;
 import lombok.*;
+import net.lopymine.ip.InventoryParticles;
 import net.lopymine.ip.config.misc.CachedItem;
-import net.lopymine.ip.resourcepack.manager.AbstractConfigsManager;
+import net.lopymine.ip.family.cache.FamilyParticlesAtlasCacheManager;
+import net.lopymine.ip.family.generation.batch.*;
+import net.lopymine.ip.resourcepack.manager.*;
 import net.lopymine.ip.t2o.*;
-import net.lopymine.ipi.InventoryInteractions;
 import net.lopymine.ipi.client.InventoryInteractionsClient;
 import net.lopymine.ipi.config.model.*;
 import net.lopymine.ipi.config.physics.*;
 import net.lopymine.ipi.family.*;
-import net.lopymine.ipi.family.cache.FamilyBaseTextureCacheManager;
+import net.lopymine.ipi.family.cache.*;
+import net.lopymine.ipi.family.cache.FamilyLinkCache;
 import net.lopymine.ipi.utils.DimensionOffset;
 import net.lopymine.ipi.family.generation.BaseTextureGenerationManager;
 import net.lopymine.mossylib.loader.MossyLoader;
@@ -26,11 +29,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.item.Item;
+import net.minecraft.world.item.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class PhysicsModelsConfigsManager extends AbstractConfigsManager<PhysicsModelConfig> {
+
+	public static final int FAMILY_CELL_SIZE = 16;
 
 	public static final String MOD_FOLDER = "iinteractions";
 
@@ -85,7 +90,7 @@ public class PhysicsModelsConfigsManager extends AbstractConfigsManager<PhysicsM
 				return null;
 			}
 
-			if (MossyLoader.isDevelopmentEnvironment()) {
+			if (MossyLoader.isDevelopmentEnvironment() && !debug) {
 				Set<Entry<ResourceKey<Item>, Item>> set = new HashSet<>(BuiltInRegistries.ITEM.entrySet());
 				for (Entry<ResourceKey<Item>, Item> entry : set) {
 					Identifier identifier = entry.getKey().identifier();
@@ -134,36 +139,111 @@ public class PhysicsModelsConfigsManager extends AbstractConfigsManager<PhysicsM
 
 	private static @NonNull CompletableFuture<ReloadData> startLinkingFuture(int currentVersion, String stage, ReloadInfo reloadInfo, Collection<Entry<ResourceKey<Item>, Item>> entries, boolean debug) {
 		return CompletableFuture.supplyAsync(() -> {
+			long before = System.currentTimeMillis();
 			InventoryInteractionsClient.LOGGER.info("Started linking physics models for {} items...", stage);
 			ReloadData reloadData = new ReloadData(currentVersion);
 
 			reloadInfo.setProgress(0);
 			reloadInfo.setTotalItems(entries.size());
 
-			for (Entry<ResourceKey<Item>, Item> entry : entries) {
-				if (VERSION.get() != reloadData.getVersion() || Minecraft.getInstance().level == null) {
-					InventoryInteractionsClient.LOGGER.warn("Canceled linking physics models for {} items.", stage);
+			Map<String, List<Entry<ResourceKey<Item>, Item>>> groups = getGroupedItems(entries);
+			for (List<Entry<ResourceKey<Item>, Item>> group : groups.values()) {
+				if (!linkGroup(group, reloadData, reloadInfo, debug)) {
+					InventoryParticles.LOGGER.warn("Canceled linking physics models for {} items.", stage);
 					return null;
 				}
-				Identifier id = entry.getKey().identifier();
-				Item item = entry.getValue();
-
-				reloadInfo.setCurrentItem(id.toString());
-				long before = System.currentTimeMillis();
-				getPhysicsModelsForItem(debug, id, item, reloadData);
-				long after = System.currentTimeMillis();
-				reloadInfo.getLastProcessedItemsTime().add(after - before);
-				reloadInfo.setProgress(reloadInfo.getProgress() + 1);
 			}
 
-			InventoryInteractionsClient.LOGGER.info("Finished linking physics models for {} items!", stage);
+			long after = System.currentTimeMillis();
+			InventoryInteractionsClient.LOGGER.info("Finished linking physics models for {} items! It took {} seconds. Amount: {}", stage, (after - before) / 1000D, entries.size());
 			return reloadData;
 		});
 	}
 
-	private static void getPhysicsModelsForItem(boolean debug, Identifier itemId, Item item, ReloadData reloadData) {
+	private static boolean linkGroup(List<Entry<ResourceKey<Item>, Item>> entries, ReloadData reloadData, ReloadInfo reloadInfo, boolean debug) {
+		if (isLinkingCanceled(reloadData)) {
+			return false;
+		}
+
+		FamilyLinkCache linkCache = new FamilyLinkCache();
+		extractAndRenderFamilyItemImages(linkCache, entries, debug);
+
+		try {
+			for (Entry<ResourceKey<Item>, Item> entry : entries) {
+				if (isLinkingCanceled(reloadData)) {
+					return false;
+				}
+				Identifier itemId = entry.getKey().identifier();
+				Item item = entry.getValue();
+
+				reloadInfo.setCurrentItem(itemId.toString());
+				long before = System.currentTimeMillis();
+				linkSpawners(reloadData, itemId, item, linkCache, debug);
+				long after = System.currentTimeMillis();
+				reloadInfo.getLastProcessedItemsTime().add(after - before);
+				reloadInfo.setProgress(reloadInfo.getProgress() + 1);
+			}
+		} finally {
+			linkCache.closeAndClear();
+		}
+
+		return true;
+	}
+
+	private static Map<String, List<Entry<ResourceKey<Item>, Item>>> getGroupedItems(Collection<Entry<ResourceKey<Item>, Item>> entries) {
+		Map<String, List<Entry<ResourceKey<Item>, Item>>> groups = new LinkedHashMap<>();
+		for (Entry<ResourceKey<Item>, Item> entry : entries) {
+			groups.computeIfAbsent(entry.getKey().identifier().getNamespace(), (ignored) -> new ArrayList<>()).add(entry);
+		}
+		return groups;
+	}
+
+	private static void extractAndRenderFamilyItemImages(FamilyLinkCache cache, List<Entry<ResourceKey<Item>, Item>> entries, boolean debug) {
+		List<ItemRenderRequest> renderRequests = new ArrayList<>();
+
+		for (Entry<ResourceKey<Item>, Item> entry : entries) {
+			Identifier itemId = entry.getKey().identifier();
+			Item item = entry.getValue();
+
+			if (shouldExtractFamilyItemImage(debug, itemId, item)) {
+				extractFamilyItemRenderRequests(cache, renderRequests, itemId, item);
+			}
+		}
+
+		cache.setImages(ItemRenderBatcher.render(renderRequests, FAMILY_CELL_SIZE));
+	}
+
+	private static boolean shouldExtractFamilyItemImage(boolean debug, Identifier itemId, Item item) {
 		if (debug) {
-			PhysicsModel familyModel = getFamilyPhysicsModel(itemId, item);
+			return true;
+		}
+		if (itemId.getNamespace().equals("minecraft")) {
+			return false;
+		}
+		PhysicsModel physicsModel = PER_ITEM_PHYSICS_MODELS.get(item);
+		return physicsModel == null;
+	}
+
+	private static void extractFamilyItemRenderRequests(FamilyLinkCache plan, List<ItemRenderRequest> requests, Identifier itemId, Item item) {
+		List<FamilyPhysicsModelConfig> configs = FamilyPhysicsModelsManager.get(item);
+		if (configs.isEmpty()) {
+			return;
+		}
+		plan.putResolvedFamilyConfigs(item, configs);
+
+		boolean cached = FamilyBaseTextureCacheManager.load(itemId) != null;
+		if (!cached) {
+			requests.add(new ItemRenderRequest(itemId, item, null));
+		}
+	}
+
+	private static boolean isLinkingCanceled(ReloadData reloadData) {
+		return VERSION.get() != reloadData.getVersion() || Minecraft.getInstance().level == null;
+	}
+
+	private static void linkSpawners(ReloadData reloadData, Identifier itemId, Item item, FamilyLinkCache cache, boolean debug) {
+		if (debug) {
+			PhysicsModel familyModel = extractFamilyModel(itemId, item, cache);
 			if (familyModel != null) {
 				reloadData.getFamilyModels().put(item, familyModel);
 			}
@@ -177,7 +257,7 @@ public class PhysicsModelsConfigsManager extends AbstractConfigsManager<PhysicsM
 		}
 
 		if (!itemId.getNamespace().equals("minecraft")) {
-			PhysicsModel familyModel = getFamilyPhysicsModel(itemId, item);
+			PhysicsModel familyModel = extractFamilyModel(itemId, item, cache);
 			if (familyModel != null) {
 				reloadData.getFamilyModels().put(item, familyModel);
 			}
@@ -185,8 +265,8 @@ public class PhysicsModelsConfigsManager extends AbstractConfigsManager<PhysicsM
 	}
 
 	@Nullable
-	private static PhysicsModel getFamilyPhysicsModel(Identifier itemId, Item item) {
-		List<FamilyPhysicsModelConfig> list = FamilyPhysicsModelsManager.get(item);
+	private static PhysicsModel extractFamilyModel(Identifier itemId, Item item, FamilyLinkCache cache) {
+		List<FamilyPhysicsModelConfig> list = cache.getResolvedFamilyConfigs(item);
 
 		for (FamilyPhysicsModelConfig config : list) {
 			if (config.getBaseTexture() != PhysicsModelConfig.DEFAULT_BASE_TEXTURE) {
@@ -194,7 +274,7 @@ public class PhysicsModelsConfigsManager extends AbstractConfigsManager<PhysicsM
 				return new PhysicsModel(parsed.massCenter(), parsed.grabPos(), config.getPhysics());
 			}
 
-			BaseTexture baseTexture = BaseTextureGenerationManager.generateBaseTexture(itemId, item, config.getGrabCorner());
+			BaseTexture baseTexture = BaseTextureGenerationManager.generateBaseTexture(itemId, item, config.getGrabCorner(), cache);
 			if (baseTexture == null) {
 				continue;
 			}

@@ -48,14 +48,14 @@ public class InventoryParticleMixin {
 		DimensionOffset massCenter = cursorItem.getMassCenter();
 		IParticleSpawnPos particleSpawnPos = this.spawnArea == null ? null : this.spawnArea.getRandomPos(particle.getRandom());
 
-		double xOffset = 4.0D - massCenter.getOffsetX() - particle.getWidth() / 2.0D + (particleSpawnPos != null ? -particleSpawnPos.getXOffset() + particleSpawnPos.x() : 0.0D);
-		double yOffset = 4.0D - massCenter.getOffsetY() - particle.getHeight() / 2.0D + (particleSpawnPos != null ? -particleSpawnPos.getYOffset() + particleSpawnPos.y() : 0.0D);
+		double xOffset = 4.0D + 0.5D - massCenter.getOffsetX() - particle.getWidth() / 2.0D + (particleSpawnPos != null ? particleSpawnPos.getDetailedX() : 0.0D);
+		double yOffset = 4.0D + 0.5D - massCenter.getOffsetY() - particle.getHeight() / 2.0D + (particleSpawnPos != null ? particleSpawnPos.getDetailedY() : 0.0D);
 
 		RandomSource random = particle.getRandom();
 
 		float progress = random.nextIntBetweenInclusive(0, 100) / 100.0F;
-		int randomX = random.nextIntBetweenInclusive(0, 2);
-		int randomY = random.nextIntBetweenInclusive(0, 2);
+		int randomX = random.nextIntBetweenInclusive(-1, 1);
+		int randomY = random.nextIntBetweenInclusive(-1, 1);
 
 		ParticlePoint previousPoint = this.ipi$getParticlePoint(cursorItem, xOffset, yOffset, 0.0F);
 		ParticlePoint currentPoint  = this.ipi$getParticlePoint(cursorItem, xOffset, yOffset, 1.0F);
