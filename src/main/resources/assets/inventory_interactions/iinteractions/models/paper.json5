@@ -2,8 +2,10 @@
 	"base_texture": "paper.png",
 	"items": [
 		"minecraft:paper",
-		"minecraft:map",
+		//? if <=26.2 {
+		/*"minecraft:map",
 		"minecraft:filled_map"
+		*///?}
 	],
 	"physics": {
 		"gravity": 1.0,

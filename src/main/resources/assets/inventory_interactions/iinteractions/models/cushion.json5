@@ -1,0 +1,26 @@
+{
+	"base_texture": "cushion.png",
+	"items": [
+		"minecraft:red_cushion",
+		"minecraft:orange_cushion",
+		"minecraft:yellow_cushion",
+		"minecraft:lime_cushion",
+		"minecraft:green_cushion",
+		"minecraft:cyan_cushion",
+		"minecraft:light_blue_cushion",
+		"minecraft:blue_cushion",
+		"minecraft:purple_cushion",
+		"minecraft:magenta_cushion",
+		"minecraft:pink_cushion",
+		"minecraft:white_cushion",
+		"minecraft:light_gray_cushion",
+		"minecraft:gray_cushion",
+		"minecraft:black_cushion",
+		"minecraft:brown_cushion"
+	],
+	"physics": {
+		"gravity": 1.0,
+		"braking": 0.990,
+		"cursor_impulse_inherit_coefficient": 1.0
+	}
+}

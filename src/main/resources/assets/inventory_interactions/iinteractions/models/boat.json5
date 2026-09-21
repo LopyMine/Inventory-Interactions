@@ -18,7 +18,9 @@
 		"minecraft:jungle_boat",
 		"minecraft:jungle_chest_boat",
 		"minecraft:mangrove_boat",
-		"minecraft:mangrove_chest_boat"
+		"minecraft:mangrove_chest_boat",
+		"minecraft:poplar_boat",
+		"minecraft:poplar_chest_boat"
 	],
 	"physics": {
 		"gravity": 1.0,

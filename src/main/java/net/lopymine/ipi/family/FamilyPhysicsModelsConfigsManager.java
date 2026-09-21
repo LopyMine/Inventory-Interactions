@@ -42,6 +42,11 @@ public class FamilyPhysicsModelsConfigsManager extends AbstractConfigsManager<Fa
 	}
 
 	@Override
+	protected String getModId() {
+		return InventoryInteractions.MOD_ID;
+	}
+
+	@Override
 	protected MossyLogger getLogger() {
 		return InventoryInteractionsClient.LOGGER;
 	}

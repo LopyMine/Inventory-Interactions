@@ -1,6 +1,7 @@
 package net.lopymine.ipi.resourcepack.manager;
 
 import com.mojang.blaze3d.platform.NativeImage;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.*;
 import java.util.*;
@@ -15,7 +16,9 @@ import net.lopymine.ip.family.cache.FamilyParticlesAtlasCacheManager;
 import net.lopymine.ip.family.generation.batch.*;
 import net.lopymine.ip.resourcepack.manager.*;
 import net.lopymine.ip.t2o.*;
+import net.lopymine.ipi.InventoryInteractions;
 import net.lopymine.ipi.client.InventoryInteractionsClient;
+import net.lopymine.ipi.config.InventoryInteractionsConfig;
 import net.lopymine.ipi.config.model.*;
 import net.lopymine.ipi.config.physics.*;
 import net.lopymine.ipi.family.*;
@@ -30,6 +33,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.*;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -134,6 +138,34 @@ public class PhysicsModelsConfigsManager extends AbstractConfigsManager<PhysicsM
 		}).exceptionally(throwable -> {
 			InventoryInteractionsClient.LOGGER.error("Failed to update physics models:", throwable);
 			return null;
+		}).thenRun(() -> {
+			Map<Item, PhysicsModel> combinedMap = COMBINED_MAP;
+			if (!InventoryInteractionsConfig.getInstance().getMainConfig().isDebugModeEnabled() || !MossyLoader.isDevelopmentEnvironment()) {
+				return;
+			}
+			if (Minecraft.getInstance().level == null || combinedMap.isEmpty()) {
+				return;
+			}
+
+			ArrayList<String> list = new ArrayList<>();
+
+			for (Entry<ResourceKey<Item>, Item> entry : BuiltInRegistries.ITEM.entrySet()) {
+				Item item = entry.getValue();
+				if (Minecraft.getInstance().level == null) {
+					break;
+				}
+				PhysicsModel physicsModel = combinedMap.get(item);
+				if (physicsModel != null) {
+					continue;
+				}
+				list.add(item.getDescriptionId());
+			}
+
+			list.sort(Comparator.naturalOrder());
+
+			for (String s : list) {
+				InventoryInteractionsClient.LOGGER.error("No physics model for {}", s);
+			}
 		});
 	}
 
@@ -333,6 +365,11 @@ public class PhysicsModelsConfigsManager extends AbstractConfigsManager<PhysicsM
 	@Override
 	protected MossyLogger getLogger() {
 		return InventoryInteractionsClient.LOGGER;
+	}
+
+	@Override
+	protected String getModId() {
+		return InventoryInteractions.MOD_ID;
 	}
 
 	@Override

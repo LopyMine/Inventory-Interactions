@@ -16,7 +16,8 @@
 		"minecraft:light_gray_bed",
 		"minecraft:gray_bed",
 		"minecraft:black_bed",
-		"minecraft:brown_bed"
+		"minecraft:brown_bed",
+		"minecraft:straw_bed"
 	],
 	"physics": {
 		"gravity": 1.0,
