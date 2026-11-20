@@ -6,7 +6,8 @@ import net.lopymine.ip.InventoryParticles;
 import net.lopymine.ip.config.sub.InventoryParticlesCacheConfig.CacheInvalidateMode;
 import net.lopymine.ipi.InventoryInteractions;
 import net.lopymine.ipi.config.sub.*;
-import net.lopymine.ipi.family.cache.FamilyInteractionsCacheManager;
+import net.lopymine.ipi.yacl.screen.CacheInvalidationScreen;
+import net.lopymine.mossylib.utils.ScreenUtils;
 import net.lopymine.mossylib.yacl.api.*;
 import net.lopymine.mossylib.yacl.extension.SimpleOptionExtension;
 import net.minecraft.client.gui.screens.Screen;
@@ -53,10 +54,12 @@ public class YACLConfigurationScreen {
 				SimpleOption.<CacheInvalidateMode>startBuilder("invalidate_mode")
 						.withBinding(defConfig.getInvalidateMode(), config::getInvalidateMode, config::setInvalidateMode, true)
 						.withController(CacheInvalidateMode.class)
-						.withDescription(SimpleContent.NONE),
+						.withDescription(SimpleContent.NONE)
+		).options(
 				SimpleOption.startButtonBuilder("invalidate_now", (screen, option) -> {
-							FamilyInteractionsCacheManager.deleteSilence();
+							ScreenUtils.set(CacheInvalidationScreen.create(screen));
 						}).withDescription(SimpleContent.NONE)
+						.build(InventoryInteractions.MOD_ID)
 		).build(InventoryParticles.MOD_ID);
 	}
 

@@ -4,9 +4,9 @@ import com.mojang.serialization.Codec;
 import java.util.*;
 import lombok.*;
 import net.lopymine.ip.family.FamilyParticleConfig.WhitelistAndBlacklist;
-import net.lopymine.ipi.InventoryInteractions;
 import net.lopymine.ipi.config.model.PhysicsModelConfig;
 import net.lopymine.ipi.config.physics.PhysicsConfig;
+import net.lopymine.ipi.resourcepack.manager.PhysicsModelsConfigsManager;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.StringRepresentable;
 import static com.mojang.serialization.codecs.RecordCodecBuilder.create;
@@ -70,7 +70,7 @@ public class FamilyPhysicsModelConfig {
 	}
 
 	public Identifier getBaseTextureInFolder() {
-		return InventoryInteractions.id("textures/iinteractions/models/%s".formatted(this.baseTexture.getPath()));
+		return PhysicsModelsConfigsManager.getBaseTextureInFolder(this.baseTexture);
 	}
 
 	public enum GrabCorner implements StringRepresentable {

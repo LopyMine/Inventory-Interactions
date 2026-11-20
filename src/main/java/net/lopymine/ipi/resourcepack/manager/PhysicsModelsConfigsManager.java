@@ -43,6 +43,12 @@ public class PhysicsModelsConfigsManager extends AbstractConfigsManager<PhysicsM
 
 	public static final String MOD_FOLDER = "iinteractions";
 
+	public static final String FOLDER_NAME = "models";
+	public static final String LEGACY_FOLDER_NAME = "%s/models".formatted(MOD_FOLDER);
+
+	public static final String TEXTURES_PREFIX = "textures/%s/%s/".formatted(InventoryInteractions.MOD_ID, FOLDER_NAME);
+	private static final String LEGACY_TEXTURES_PREFIX = "textures/%s/".formatted(LEGACY_FOLDER_NAME);
+
 	public static final DimensionOffset MIDDLE_POS = new DimensionOffset(8, 8, 16, 16);
 	public static final DimensionOffset MIDDLE_BOTTOM_POS = new DimensionOffset(8, 16, 16, 16);
 	public static final PhysicsModel STANDARD_MODEL = new PhysicsModel(MIDDLE_BOTTOM_POS, MIDDLE_POS, PhysicsConfig.getNewInstance().get());
@@ -68,6 +74,7 @@ public class PhysicsModelsConfigsManager extends AbstractConfigsManager<PhysicsM
 	}
 
 	public static void updateCombinedMap() {
+		FamilyInteractionsCacheManager.clearLoadedIfRequested();
 		boolean debug = Boolean.getBoolean("inventory_interactions.debug_generate");
 		int currentVersion = VERSION.incrementAndGet();
 
@@ -349,7 +356,12 @@ public class PhysicsModelsConfigsManager extends AbstractConfigsManager<PhysicsM
 
 	@Override
 	protected String getFolderName() {
-		return "%s/models".formatted(MOD_FOLDER);
+		return FOLDER_NAME;
+	}
+
+	@Override
+	protected String getLegacyFolderName() {
+		return LEGACY_FOLDER_NAME;
 	}
 
 	@Override
@@ -438,6 +450,15 @@ public class PhysicsModelsConfigsManager extends AbstractConfigsManager<PhysicsM
 			this.averageSeconds = ((double) this.sum / this.deque.size()) / 1000.0;
 		}
 
+	}
+
+	public static Identifier getBaseTextureInFolder(Identifier baseTexture) {
+		Identifier id = InventoryInteractions.id("%s%s".formatted(TEXTURES_PREFIX, baseTexture.getPath()));
+		if (Texture2ObjectsManager.getResourceManager().getResource(id).isPresent()) {
+			return id;
+		}
+		Identifier legacyId = InventoryInteractions.id("%s%s".formatted(LEGACY_TEXTURES_PREFIX, baseTexture.getPath()));
+		return Texture2ObjectsManager.getResourceManager().getResource(legacyId).isPresent() ? legacyId : id;
 	}
 
 	private static @NotNull PhysicsModelsConfigsManager.BaseTexture parseBaseTexture(Identifier baseTexture) {

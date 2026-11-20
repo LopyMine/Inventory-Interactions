@@ -1,5 +1,3 @@
-import net.lopymine.utils.MossyUtils
-
 plugins {
 	id "net.lopymine.mossy-plugin-core" version "$mossy_plugin_version"
 }
@@ -16,25 +14,31 @@ mossyDependencies {
 	neoForge = prop("build.neoforge")
 	parchment = prop("build.parchment")
 
-//	additional {
+	additional {
 //		disable("inventory-particles")
-//	}
+//		disable("mossylib")
+	}
 }
 
 mossyResources {
 	customProperty("inventory_particles", prop("dep.inventory-particles"))
-	customProperty("mossylib_version", MossyUtils.substringBefore(prop("dep.mossylib"), "+"))
-	customProperty("inventory_particles_version", MossyUtils.substringBefore(prop("dep.inventory-particles"), "+"))
+	customProperty("mossylib_version", localVersion("dep.mossylib"))
+	customProperty("inventory_particles_version", localVersion("dep.inventory-particles"))
 }
 
 //repositories {
-//	mavenLocal()
+//	exclusiveContent {
+//		forRepository { mavenLocal() }
+//		filter {
+//			includeModule("net.lopymine", "mossylib")
+//			includeModule("net.lopymine", "inventory_particles")
+//		}
+//	}
 //}
-//
+
 //dependencies {
-//
-//	mossyImplementation("net.lopymine:inventory_particles:3.0.0-beta.1-" + sc.current.project)
-//
+//	mossyImplementation("net.lopymine:mossylib:${localVersion("dep.mossylib")}-${stonecutter.current.project}")
+//	mossyImplementation("net.lopymine:inventory_particles:${localVersion("dep.inventory-particles")}-${stonecutter.current.project}")
 //}
 
 stonecutter {
@@ -66,4 +70,8 @@ repositories {
 
 String prop(String key) {
 	return findProperty(key).toString()
+}
+
+String localVersion(String key) {
+	return prop(key).tokenize("+")[0]
 }

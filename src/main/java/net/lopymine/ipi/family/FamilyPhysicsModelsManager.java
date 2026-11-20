@@ -1,6 +1,7 @@
 package net.lopymine.ipi.family;
 
 import java.util.*;
+import java.util.regex.Pattern;
 import net.lopymine.ip.client.command.tags.TagsCommand;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
@@ -8,6 +9,8 @@ import net.minecraft.world.item.*;
 import org.jetbrains.annotations.NotNull;
 
 public class FamilyPhysicsModelsManager {
+
+	private static final Pattern KEYS_SEPARATOR = Pattern.compile("[/_]+");
 
 	public static List<FamilyPhysicsModelConfig> get(Item item) {
 		List<FamilyPhysicsModelConfig> data = getFamiliesByItemData(item);
@@ -34,16 +37,10 @@ public class FamilyPhysicsModelsManager {
 				continue;
 			}
 
-			if (matchSpecialMarkers(item, config.getSpecialMarkers().getWhitelist())) {
-				configs.add(config);
-			}
-			if (matchKeywords(id, config.getKeywords().getWhitelist())) {
-				configs.add(config);
-			}
-			if (matchTags(id, config.getTags().getWhitelist())) {
-				configs.add(config);
-			}
-			if (matchNamespaces(id, config.getNamespaces().getWhitelist())) {
+			if (matchSpecialMarkers(item, config.getSpecialMarkers().getWhitelist())
+					|| matchKeywords(id, config.getKeywords().getWhitelist())
+					|| matchTags(id, config.getTags().getWhitelist())
+					|| matchNamespaces(id, config.getNamespaces().getWhitelist())) {
 				configs.add(config);
 			}
 		}
@@ -62,7 +59,7 @@ public class FamilyPhysicsModelsManager {
 
 	private static boolean matchKeywords(Identifier itemId, ArrayList<String> list) {
 		String path = itemId.getPath();
-		String[] keys = path.split("_");
+		String[] keys = KEYS_SEPARATOR.split(path);
 
 		for (String key : keys) {
 			if (list.contains(key)) {
@@ -80,7 +77,6 @@ public class FamilyPhysicsModelsManager {
 	}
 
 	private static boolean matchTags(Identifier itemId, ArrayList<String> list) {
-		String path = itemId.getPath();
 		List<String> tags = TagsCommand.getTags(itemId);
 		if (tags == null) {
 			return false;
@@ -92,9 +88,15 @@ public class FamilyPhysicsModelsManager {
 			}
 		}
 
-		for (String tag : tags) {
-			if (tag.startsWith("@") && path.contains(tag.substring(1))) {
-				return true;
+		for (String entry : list) {
+			if (!entry.startsWith("@")) {
+				continue;
+			}
+			String part = entry.substring(1);
+			for (String tag : tags) {
+				if (tag.contains(part)) {
+					return true;
+				}
 			}
 		}
 

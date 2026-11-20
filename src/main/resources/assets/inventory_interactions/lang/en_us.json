@@ -13,5 +13,25 @@
 	"${mod_id}.modmenu.option.debug_mode_enabled.name": "Debug Mode Enabled",
 	"${mod_id}.modmenu.option.debug_mode_enabled.description": "If enabled, you will see some debug info; if disabled, won't.",
 
+	"${mod_id}.modmenu.option.invalidate_now.name": "Invalidate Cache Now",
+	"${mod_id}.modmenu.option.invalidate_now.description": "Deletes cached physics models (mass center and grab point) of modded items. All data from the cache folder §e\"config/inventory-interactions/cache/\"§r will be deleted.\nThe new physics models are calculated the next time you join a world/server. If you are already in a world, the calculation can be started right away, or you can reload resources with §eF3 + T§r.\n\n§lWhen to use:§r\n1) It may help to update outdated physics models of modded items.\n2) It may help if modded items are held by the wrong point or rotate strangely. If the problem is still there after the recalculation, open an issue on GitHub describing your problem.\n\nIn extreme cases you can delete this folder yourself, if for some reason the mod could not do it. After deleting it, a full restart of your client is recommended.",
+
+	"${mod_id}.cache_invalidation.title": "Cache Invalidation",
+	"${mod_id}.cache_invalidation.in_world": "You are already in a world. Do you want to delete the old cache and start a new calculation right away?",
+	"${mod_id}.cache_invalidation.not_in_world": "You are not in a world. So the old cache will be deleted, and the new one will start calculating right after you join any world.",
+	"${mod_id}.cache_invalidation.delete_and_regenerate": "Delete And Start Now",
+	"${mod_id}.cache_invalidation.delete_only": "Only Delete Cache",
+	"${mod_id}.cache_invalidation.delete": "Delete Cache",
+	"${mod_id}.cache_invalidation.back": "Go Back",
+
+	"${mod_id}.toast.cache.deleting.title": "Deleting Cache",
+	"${mod_id}.toast.cache.deleting.message": "Deleting the physics models cache of modded items...",
+	"${mod_id}.toast.cache.deleted.title": "Cache Deleted",
+	"${mod_id}.toast.cache.deleted.message": "Successfully deleted the physics models cache of modded items",
+	"${mod_id}.toast.cache.failed.title": "Failed To Delete Cache",
+	"${mod_id}.toast.cache.failed.message": "Could not delete the physics models cache. See the game log for details",
+	"${mod_id}.toast.cache.regenerate_on_join.title": "Cache Regeneration",
+	"${mod_id}.toast.cache.regenerate_on_join.message": "The cache will be recalculated the next time you join a world, or after reloading resources (F3 + T) while already in a world",
+
 	"${mod_id}.models_linking.title": "Linking Physics Models To Items"
 }

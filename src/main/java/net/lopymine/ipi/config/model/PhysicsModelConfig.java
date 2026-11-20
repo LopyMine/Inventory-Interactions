@@ -7,6 +7,7 @@ import lombok.*;
 import net.lopymine.ip.config.misc.CachedItem;
 import net.lopymine.ipi.InventoryInteractions;
 import net.lopymine.ipi.config.physics.PhysicsConfig;
+import net.lopymine.ipi.resourcepack.manager.PhysicsModelsConfigsManager;
 import net.lopymine.mossylib.utils.*;
 import net.minecraft.resources.Identifier;
 import static com.mojang.serialization.codecs.RecordCodecBuilder.create;
@@ -38,7 +39,7 @@ public class PhysicsModelConfig {
 	private PhysicsConfig physicsConfig;
 
 	public Identifier getBaseTextureInFolder() {
-		return InventoryInteractions.id("textures/iinteractions/models/%s".formatted(this.baseTexture.getPath()));
+		return PhysicsModelsConfigsManager.getBaseTextureInFolder(this.baseTexture);
 	}
 
 }

@@ -14,8 +14,11 @@ import org.jetbrains.annotations.NotNull;
 @Getter
 public class FamilyPhysicsModelsConfigsManager extends AbstractConfigsManager<FamilyPhysicsModelConfig> {
 
-	public static final Identifier FALLBACK_CONFIG_ID = InventoryInteractions.id("%s/ifamilies/models/standard.json"
-			.formatted(PhysicsModelsConfigsManager.MOD_FOLDER));
+	public static final String FOLDER_NAME = "families/models";
+	public static final String LEGACY_FOLDER_NAME = "%s/ifamilies/models".formatted(PhysicsModelsConfigsManager.MOD_FOLDER);
+
+	public static final Identifier FALLBACK_CONFIG_ID = InventoryInteractions.id("%s/%s/standard"
+			.formatted(InventoryInteractions.MOD_ID, FOLDER_NAME));
 
 	private final Map<Identifier, FamilyPhysicsModelConfig> registeredConfigsMap = new HashMap<>();
 	private final List<FamilyPhysicsModelConfig> registeredConfigs = new ArrayList<>();
@@ -28,7 +31,12 @@ public class FamilyPhysicsModelsConfigsManager extends AbstractConfigsManager<Fa
 
 	@Override
 	protected String getFolderName() {
-		return "%s/ifamilies/models".formatted(PhysicsModelsConfigsManager.MOD_FOLDER);
+		return FOLDER_NAME;
+	}
+
+	@Override
+	protected String getLegacyFolderName() {
+		return LEGACY_FOLDER_NAME;
 	}
 
 	@Override
